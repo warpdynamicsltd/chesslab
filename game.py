@@ -20,10 +20,10 @@ from chess import Board
 
 # CONFIG
 engine = SimpleEngine.popen_uci("engines/stockfish.exe", creationflags=subprocess.CREATE_NO_WINDOW)
-selector = RandomSelector(tolerance=100)
+selector = RandomSelector(tolerance=200)
 limit = Limit(time=1)
 # start_fen = chess.STARTING_FEN
-start_fen = "3r2k1/1B3p1p/p3b1p1/q7/P1p1P3/2Q4P/3r1PP1/1RR3K1 b - - 1 1"
+start_fen = "5nk1/pp2r2p/2p2p1Q/3p1p1P/3P2P1/2P5/PqBK4/7R b - g3 0 1"
 automaton_color = chess.WHITE
 
 automaton = Automaton(engine, limit, selector)

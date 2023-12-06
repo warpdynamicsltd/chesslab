@@ -58,7 +58,8 @@ class RandomSelector(Selector):
             depths.sort()
             max_depth = depths[-1]
             score = eval_res[move_key][max_depth].pov(evaluation.color_on_move)
-            move_list.append((move_key, score))
+            score3 = eval_res[move_key][3].pov(evaluation.color_on_move)
+            move_list.append((move_key, score, score3))
 
         move_list.sort(key=lambda k: k[1])
         max_score = move_list[-1][1]
@@ -67,12 +68,15 @@ class RandomSelector(Selector):
             return Move.from_uci(move_list[-1][0])
 
         moves = []
-        for m, score in move_list:
+        weights = []
+        for m, score, score3 in move_list:
             if not score.is_mate():
-                if max_score_v - score.score() <= self.tolerance:
+                if max_score_v - score.score() <= self.tolerance and score3.score() >= max_score_v:
+                    print(m, max_score_v, score.score(), score3.score())
+                    weights.append(score3.score() - max_score_v)
                     moves.append(m)
 
-        m = random.choice(moves)
+        m = random.choices(population=moves, weights=weights)[0]
         return Move.from_uci(m)
 
 
