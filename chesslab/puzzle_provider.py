@@ -19,9 +19,11 @@ class PuzzleProvider:
         fen = sample['FEN'].values[0]
         moves = sample['Moves'].values[0]
         rating = sample['Rating'].values[0]
-        puzzle = Puzzle(fen=fen, uci_moves_string=moves, title=rating)
+        url = sample['GameUrl'].values[0]
+        title = f"{url} ({rating})"
+        puzzle = Puzzle(fen=fen, uci_moves_string=moves, title=title)
         flipped = False if not self.rnd_flipped else random.choice([False, True])
         if display is not None:
-            puzzle.jupyter_dsp(display, size=size, flipped=flipped, title=title)
+            puzzle.jupyter_dsp(display, size=size, flipped=flipped, title=None)
         return puzzle
 
