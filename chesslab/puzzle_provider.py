@@ -13,7 +13,7 @@ class PuzzleProvider:
 
         self.rnd_flipped = False
 
-    def next_puzzle(self, display=None, size=400, title=False):
+    def next_puzzle(self, display=None, size=400, show_title=False, coordinates=True, solution=False):
         training_set, = random.choices(self.training_sets, weights=self.weights, k=1)
         sample = training_set.sample()
         fen = sample['FEN'].values[0]
@@ -24,6 +24,8 @@ class PuzzleProvider:
         puzzle = Puzzle(fen=fen, uci_moves_string=moves, title=title)
         flipped = False if not self.rnd_flipped else random.choice([False, True])
         if display is not None:
-            puzzle.jupyter_dsp(display, size=size, flipped=flipped, title=None)
+            puzzle.jupyter_dsp(display, size=size, flipped=flipped, show_title=show_title, coordinates=coordinates)
+            if solution:
+                print(puzzle.solution())
         return puzzle
 

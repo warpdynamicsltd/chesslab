@@ -53,12 +53,14 @@ class Puzzle:
         pgn_string = game.accept(exporter)
         return pgn_string
 
-    def jupyter_dsp(self, display, size=400, flipped=False, title=False):
-        if title:
+    def jupyter_dsp(self, display, size=400, flipped=False, show_title=False, coordinates=False):
+        if show_title:
             print(self.title)
         print(self.get_first_move_str())
-        display(chess.svg.board(self.board, size=size, flipped=flipped))
+        display(chess.svg.board(self.board, size=size, flipped=flipped, coordinates=coordinates))
+        print("\u2191" if (self.board.turn and not flipped) or (not self.board.turn and flipped) else "\u2193")
         print(f"{self.get_turn_name()} to move")
+
 
 
 

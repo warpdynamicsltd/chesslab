@@ -1,12 +1,17 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='chesslab',
     version='',
-    packages=[''],
+    packages=find_packages(),
     url='',
-    license='',
+    license='Copyright (c) 2023 Warp Dynamics Limited. All rights reserved.',
     author='Michal Wojcik',
     author_email='wojcik@warpdynamics.co.uk',
-    description=''
+    description='',
+    scripts=['chesslab/scripts/chessio.py'],
+    entry_points={
+            'console_scripts': [
+                'chessio = chessio:main'
+            ]}
 )
