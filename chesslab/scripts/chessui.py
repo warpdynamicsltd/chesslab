@@ -13,6 +13,7 @@ import subprocess
 from multiprocessing import Process, Queue
 from queue import Empty
 from chesslab.apps import MainApp, Payload
+from chesslab.apps.poslab import PosLab
 
 
 def convert_svg_to_png(svg_string):
@@ -21,13 +22,19 @@ def convert_svg_to_png(svg_string):
     return output
 
 
+apps = {
+    'poslab': PosLab
+}
+
+
 def processor(in_queue, out_queue):
-    app = MainApp()
+    app = PosLab.app()
 
     out_queue.put(app.start())
 
     while True:
         command = in_queue.get()
+        out_queue.put(Payload(command))
         a = command.split(" ", 1)
         if len(a) == 1:
             cmd, value = a[0], None
@@ -39,30 +46,31 @@ def processor(in_queue, out_queue):
             app.save()
             return
 
+        if cmd in apps:
+            app = apps[cmd](app)
+            out_queue.put(app.start())
+            out_queue.put(Payload.terminal())
+            continue
+
+        if cmd == 'exit':
+            app = app.exit()
+            out_queue.put(app.start())
+            out_queue.put(Payload.terminal())
+            continue
+
         try:
-            output = app.execute(cmd, value)
+            for output in app.execute(cmd, value):
+                out_queue.put(output)
         except Exception as e:
             if app.debug:
-                output = Payload(traceback.format_exc(), None)
+                output = Payload.terminal(text=traceback.format_exc())
             else:
-                output = Payload(repr(e), None)
-        if output is None:
-            output = Payload("Command not recognized.", None)
-        # output = (None, None)
-        # if command.startswith("echo "):
-        #     output = (command[5:], None)
-        # elif command.startswith("sleep "):
-        #     dt = float(command[6:])
-        #     time.sleep(dt)
-        # else:
-        #     output = "Command not recognized."
+                output = Payload.terminal(text=repr(e))
 
-        out_queue.put(output)
+            out_queue.put(output)
 
 
 # Create the main window
-
-
 def main():
     in_queue = Queue()
     out_queue = Queue()
@@ -81,7 +89,7 @@ def main():
     # entry.pack(side=tk.BOTTOM, padx=10, pady=10, fill=tk.X)
 
     root = tk.Tk()
-    root.title("Chessio")
+    root.title("Chesslab")
     custom_font = font.Font(family="Courier New", size=10)
 
     # Create the terminal frame on the left
@@ -133,8 +141,9 @@ def main():
                 image_label.config(image=image)
                 image_label.image = image
 
-            entry.config(state=tk.NORMAL)
-            entry.delete(0, tk.END)
+            if payload.last:
+                entry.config(state=tk.NORMAL)
+                entry.delete(0, tk.END)
 
         root.after(time_step, receiver)
 

@@ -9,9 +9,9 @@ setup(
     author='Michal Wojcik',
     author_email='wojcik@warpdynamics.co.uk',
     description='',
-    scripts=['chesslab/scripts/chessio.py'],
+    scripts=['chesslab/scripts/chessui.py'],
     entry_points={
             'console_scripts': [
-                'chessio = chessio:main'
+                'chesslab = chesslab.scripts.chessui:main'
             ]}
 )

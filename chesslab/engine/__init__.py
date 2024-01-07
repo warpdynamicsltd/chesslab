@@ -7,10 +7,16 @@ from chess.engine import SimpleEngine, Limit, PovScore, Info
 class Line:
     def __init__(self, info):
         self.score = info['score']
-        self.moves = info['pv']
+        if 'pv' in info:
+            self.moves = info['pv']
+        else:
+            self.moves = []
 
     def key(self):
-        return self.moves[0].uci()
+        if self.moves:
+            return self.moves[0].uci()
+
+        return None
 
     def sans(self, board):
         res = []
@@ -38,8 +44,10 @@ class Line:
             mate = score_rw.mate()
             if mate > 0:
                 return f"#{mate}"
-            else:
+            elif mate < 0:
                 return f"-#{mate}"
+            else:
+                return f"#{mate}"
         else:
             return f"{score_rw.score()/100:.2f}"
 
@@ -57,9 +65,9 @@ class ChesslabEngine:
     def analysis(self, board, limit):
         return self.engine.analysis(board, limit)
 
-    def analyse(self, board, limit, n):
+    def analyse(self, board, limit, multipv):
         res = []
-        analysis = self.engine.analyse(board, limit=limit,  multipv=n)
+        analysis = self.engine.analyse(board, limit=limit, multipv=multipv)
         for info in analysis:
             res.append(Line(info))
 

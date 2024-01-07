@@ -10,7 +10,7 @@ class Game:
 
     def present_board(self):
         if self.board.turn == self.automaton_color:
-            return self.automaton.move(self.board)
+            return self.automaton.go(self.board)
         else:
             return self.board
 
