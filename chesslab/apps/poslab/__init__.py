@@ -19,7 +19,7 @@ class Node:
         self.outcome = None
         self.eval_score = None
 
-    def get_score_from_lines(self):
+    def get_score_from_lines_copy(self):
         index = 0
         for line in self.lines:
             key = line.key()
@@ -40,6 +40,23 @@ class Node:
 
         return self.lines[index].score.relative.score(mate_score=Node.MATE_SCORE_VALUE), move
 
+    def get_score_from_lines(self):
+        move = None
+        score = float("-inf")
+        for line in self.lines:
+            key = line.key()
+            if key in self.children:
+                child_node = self.children[key]
+                if child_node.human_success:
+                    continue
+
+            if line.moves:
+                move = line.moves[0]
+                score = line.score.relative.score(mate_score=Node.MATE_SCORE_VALUE)
+                break
+
+        return score, move
+
     def eval(self, engine_color):
         if self.eval_score is not None:
             return self.eval_score
@@ -50,7 +67,7 @@ class Node:
             elif self.outcome.winner == engine_color:
                 self.eval_score = Node.MATE_SCORE_VALUE
             elif self.outcome.winner == (not engine_color):
-                self.eval_score = - Node.MATE_SCORE_VALUE
+                self.eval_score = - 2 * Node.MATE_SCORE_VALUE
 
             return self.eval_score
 
@@ -77,10 +94,13 @@ class Node:
     #     return move
 
     def choose_move(self, engine_color):
+        """
+        Fix problem it does not traverse all important variants
+        """
         evaluated_score = self.eval(engine_color)
         score, move = self.get_score_from_lines()
 
-        if score >= evaluated_score:
+        if move is not None and score >= evaluated_score:
             return move
 
         for key in self.children:
@@ -202,7 +222,7 @@ class PosLab(MainApp):
         yield from MainApp._fen(self, value)
         self.initialise()
 
-    def _reset(self, value):
+    def _restart(self, value):
         yield from self._fen(self.fen)
 
     def _new(self, value):
@@ -213,14 +233,18 @@ class PosLab(MainApp):
         self.limit = Limit(time=int(value))
 
     def _back(self, value):
-        yield self.payload("Can't take back during serious game")
+        yield self.payload("Can't take back during serious game.")
 
     def _decide(self, value):
-        if value == "my win":
-            self.current_node.outcome = Outcome(winner=(not self.engine_color), termination=Termination.VARIANT_WIN)
-        elif value == "engine win":
-            self.current_node.outcome = Outcome(winner=self.engine_color, termination=Termination.VARIANT_LOSS)
-        elif value == "draw":
-            self.current_node.outcome = Outcome(winner=None, termination=Termination.VARIANT_DRAW)
-
-        yield Payload.text(self.current_node.outcome.result())
+        if self.current_node.parent is not None:
+            parent = self.current_node.parent
+            if value == "white wins":
+                parent.outcome = Outcome(winner=chess.WHITE, termination=Termination.VARIANT_WIN)
+            elif value == "black wins":
+                parent.outcome = Outcome(winner=chess.BLACK, termination=Termination.VARIANT_LOSS)
+            elif value == "draw":
+                parent.outcome = Outcome(winner=None, termination=Termination.VARIANT_DRAW)
+            self.current_node.outcome = parent.outcome
+            yield Payload.text(self.current_node.outcome.result())
+        else:
+            yield Payload.text("Can't decide outcome at root position.")

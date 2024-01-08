@@ -2889,3 +2889,23 @@ Ke6 34. Rd3 f6 35. Rxc3 Rxd6 36. Re3+ Kf7 37. c4 Rd1+ 38. Kf2 Rd2+ 39. Re2 Rd4
 40. Rc2 Ke6 41. g3 Rd8 42. h4 Rc8 43. h5 Kd6 44. c5+ Ke7 45. c6 Kf7 46. c7 Kg7
 47. Rc6 Kh6 48. g4 Kg5 49. Kg3 f5 50. Rg6# 1-0
 
+[Event "Computer chess game"]
+[Site "Computer"]
+[Date "2024.01.07"]
+[Round "?"]
+[White "Fidelity SC9-D Sensory Chess Challenger 9-D"]
+[Black "Player"]
+[Result "1-0"]
+[Time "21:31:54"]
+[Termination "normal"]
+[PlyCount "41"]
+[WhiteType "program"]
+[BlackType "human"]
+[WhiteScore "-17.14"]
+[BlackScore "-40.55"]
+
+1. Nf3 d5 2. c4 e6 3. Qa4+ Bd7 4. Qb3 dxc4 5. Qxc4 Bc6 6. b3 Qd5 7. Qxd5 Bxd5
+8. Bb2 Nd7 9. Nc3 Bc6 10. Nd4 Nb8 11. Ncb5 Bxb5 12. Nxb5 Na6 13. Be5 Kd7 14.
+Rc1 c6 15. Nd4 f6 16. Bg3 Ba3 17. Rc4 Ne7 18. e4 b5 19. Rc3 e5 20. Nxb5 Nb4 21.
+Nxa3 1-0
+
