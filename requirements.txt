@@ -1,6 +1,5 @@
 jupyter
 chess
-PySimpleGUI==4.60.5
 cairosvg
 scikit-learn
 matplotlib
