@@ -49,7 +49,8 @@ class MainApp:
 Chesslab - base Chesslab application
 
 applications available:
-chesspos
+
+poslab
 
 commands available: """
 
@@ -95,8 +96,7 @@ Return a status of given attribute.
 
 status <arg>
 
-e.g. status chess_engine
-"""
+e.g. status chess_engine"""
 
         yield self.payload(str(getattr(self, value)))
 
@@ -205,7 +205,7 @@ e.g. status chess_engine
         """
 Print argument in console.
 
-echo <arg> """
+echo <arg>"""
         yield Payload.text(value)
 
     def _sleep(self, value: float):
@@ -229,8 +229,7 @@ Set the board size.
 
 size <arg: int>
 
-e.g. size 400
-"""
+e.g. size 400"""
         self.size = value
         yield self.payload()
 
@@ -245,15 +244,13 @@ Flip the board."""
         """
 Show or hide coordinates.
 
-coords on|off
-        """
+coords on|off"""
         self.coords = True if value == 'on' else False
         yield self.payload()
 
     def _back(self):
         """
-Take last move back.
-        """
+Take the last move back."""
         self.board.pop()
         yield self.payload()
 
@@ -284,8 +281,7 @@ Set borad position in Forsyth–Edwards Notation (FEN).
 
 fen <arg: str>
 
-e.g. fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
-        """
+e.g. fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"""
         self.fen = " ".join(args)
         self.set_fen()
         yield self.payload()
@@ -296,8 +292,7 @@ Set engine path.
 
 engine_path <arg:str>
 
-e.g. engine_path "C:\My Engines\best_engine.exe"
-"""
+e.g. engine_path "C:\My Engines\best_engine.exe" """
         self.engine_path = path
 
     def _lines(self, n: int):
@@ -315,7 +310,7 @@ Analyse given position for a time given as an argument in seconds.
 
 analyse <time: int>
 
-e.g. analyse 5 """
+e.g. analyse 5"""
         if self.engine_path is None:
             yield self.payload("no engine")
             return
@@ -349,12 +344,11 @@ help [<function_name: str>]
 
 e.g.
 help
-help fen
-"""
+help fen"""
         if value is None:
             res = str()
             methods = inspect.getmembers(type(self), predicate=inspect.isfunction)
-            yield Payload.text(f"\n{self.__doc__}\n")
+            yield Payload.text(f"{self.__doc__}\n")
             names = [k[0] for k in methods]
             names.sort()
             for name in names:
