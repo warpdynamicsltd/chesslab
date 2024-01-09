@@ -2,6 +2,7 @@
 
 Chesslab is an advanced analytical chess program with simple but powerful command line user interface.
 
+
 ### Instalation
 
 1. You should have <i>Python</i> with <i>tkinter</i> module. 
@@ -27,6 +28,7 @@ this package. E.g. in Ubuntu you can run `sudo apt-get install python3-tk`
 6. Now, just type `chesslab` in your terminal and gui should start. You should see something like this:
 
    ![Alt Chesslab Screen](img/chesslab.png)
+7. Type `help` in console to read documentation
 
 ### Downloading large files
 
