@@ -3,4 +3,5 @@ pandas
 chess
 cairosvg
 scikit-learn
+zstandard
 matplotlib

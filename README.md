@@ -25,3 +25,17 @@ this package. E.g. in Ubuntu you can run `sudo apt-get install python3-tk`
 6. Now, just type `chesslab` in your terminal and gui should start. You should see something like this:
 
    ![Alt Chesslab](img/chesslab.png)
+
+### Downloading large files
+
+Some functionality requires large data files. To pull them to the repo, 
+you need the following steps:  
+
+1. You need to have installed LFS extension for git
+(you will find information here: https://git-lfs.com/)
+2. Once LFT extension in installed, in `chesslab` root folder execute:
+   
+   ```git lfs install```
+
+   This will enable extension to use in this local repository
+3. Next `git pull` should download large files.
