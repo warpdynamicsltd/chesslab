@@ -26,7 +26,7 @@ this package. E.g. in Ubuntu you can run `sudo apt-get install python3-tk`
     ```pip install -e .```
 6. Now, just type `chesslab` in your terminal and gui should start. You should see something like this:
 
-   ![Alt Chesslab](img/chesslab.png)
+   ![Alt Chesslab Screen](img/chesslab.png)
 
 ### Downloading large files
 
