@@ -37,7 +37,7 @@ def processor(in_queue, out_queue):
         out_queue.put(Payload(command))
         a = command.split(" ", 1)
         if len(a) == 1:
-            cmd, value = a[0], None
+            cmd, value = a[0], ""
         else:
             cmd, value = a
 
@@ -124,7 +124,7 @@ def main():
         in_queue.put(command)
         entry.config(state=tk.DISABLED)
 
-    time_step = 50
+    time_step = 10
 
     def receiver():
         try:

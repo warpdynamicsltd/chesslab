@@ -133,7 +133,7 @@ class PosLab(MainApp):
         self.initialise()
 
     def start(self):
-        return self.payload("PosLab\n{MainApp.copyright_str}")
+        return self.payload(f"PosLab\n{MainApp.copyright_str}")
 
     def initialise(self):
         self.engine_color = (not self.board.turn)
@@ -211,31 +211,31 @@ class PosLab(MainApp):
         self.current_node.eval_score = 0
         self.current_node.clear_evals()
 
-    def _again(self, value):
+    def _again(self):
         if self.current_node.outcome is None:
             yield Payload.text("Can't start again with unknown outcome")
             return
         self.rewind_and_back_propagate_outcome()
-        yield from MainApp._again(self, value)
+        yield from MainApp._again(self)
 
-    def _fen(self, value):
+    def _fen(self, value: str):
         yield from MainApp._fen(self, value)
         self.initialise()
 
-    def _restart(self, value):
+    def _restart(self):
         yield from self._fen(self.fen)
 
-    def _new(self, value):
-        yield from MainApp._new(self, value)
+    def _new(self):
+        yield from MainApp._new(self)
         self.initialise()
 
-    def _time(self, value):
-        self.limit = Limit(time=int(value))
+    def _time(self, value: int):
+        self.limit = Limit(time=value)
 
-    def _back(self, value):
+    def _back(self):
         yield self.payload("Can't take back during serious game.")
 
-    def _decide(self, value):
+    def _decide(self, value: str):
         if self.current_node.parent is not None:
             parent = self.current_node.parent
             if value == "white wins":
