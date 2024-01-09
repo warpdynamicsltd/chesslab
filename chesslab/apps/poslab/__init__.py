@@ -133,7 +133,7 @@ class PosLab(MainApp):
         self.initialise()
 
     def start(self):
-        return self.payload("PosLab\nCopyright (c) 2022 Michal Stanislaw Wojcik. All rights reserved.")
+        return self.payload("PosLab\n{MainApp.copyright_str}")
 
     def initialise(self):
         self.engine_color = (not self.board.turn)

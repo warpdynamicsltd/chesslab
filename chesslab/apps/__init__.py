@@ -2,6 +2,7 @@ import time
 import pickle
 import io
 import os
+import datetime
 import subprocess
 
 import chess.svg
@@ -42,6 +43,7 @@ class Payload:
 
 
 class MainApp:
+    copyright_str = f"Copyright (c) Michal Stanislaw Wojcik 2023. All rights reserved."
     program_data_path = os.path.join(os.path.expanduser('~'), '.chesslab')
     pkl_file_path = os.path.join(program_data_path, 'chesslab.pkl')
 
@@ -94,7 +96,7 @@ class MainApp:
                 self.__dict__ = obj.__dict__
 
     def start(self):
-        return self.payload("Chesslab\nCopyright (c) 2022 Michal Stanislaw Wojcik. All rights reserved.")
+        return self.payload(f"Chesslab\n{MainApp.copyright_str}")
 
     def exit(self):
         return MainApp.convert_from(self)
