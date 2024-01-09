@@ -1,4 +1,5 @@
 jupyter
+pandas
 chess
 cairosvg
 scikit-learn
