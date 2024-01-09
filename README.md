@@ -1,5 +1,7 @@
 # Chesslab
 
+Chesslab is an advanced analytical chess program with simple but powerful command line user interface.
+
 ### Instalation
 
 1. You should have <i>Python</i> with <i>tkinter</i> module. 
