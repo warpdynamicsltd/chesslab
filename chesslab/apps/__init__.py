@@ -2,6 +2,7 @@ import time
 import pickle
 import io
 import os
+import shlex
 import datetime
 import subprocess
 import inspect
@@ -188,8 +189,9 @@ e.g. status chess_engine"""
             pass
 
         if hasattr(self, f'_{cmd}'):
-            args = value.split()
-            args = [self.arg_to_str_if_needed(arg) for arg in args]
+            # args = value.split()
+            # args = [self.arg_to_str_if_needed(arg) for arg in args]
+            args = shlex.split(value)
             method = getattr(self, f'_{cmd}')
             args = self.convert_arguments(method, args)
             res = method(*args)

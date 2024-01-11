@@ -122,6 +122,17 @@ class Node:
 
 
 class PosLab(MainApp):
+    """
+An application to practice winning position by
+playing different variations against the engine.
+For the first time engine plays optimally
+and then remembers lost variations.
+When you play again, it deviates from the previous variations
+to test your play.
+Human player always has first move regardless of color.
+
+read about following commands: again, decide
+"""
     def __init__(self, main_app):
         MainApp.__init__(self)
         self.__dict__ = main_app.__dict__
@@ -212,6 +223,9 @@ class PosLab(MainApp):
         self.current_node.clear_evals()
 
     def _again(self):
+        """
+Play the position again against the engine.
+Your previous variations are remembered and used to choose different variations to play."""
         if self.current_node.outcome is None:
             yield Payload.text("Can't start again with unknown outcome")
             return
@@ -219,28 +233,52 @@ class PosLab(MainApp):
         yield from MainApp._again(self)
 
     def _fen(self, value: str):
+        """
+Set borad position in Forsyth–Edwards Notation (FEN).
+
+fen <arg: str>
+
+e.g. fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"""
+
         yield from MainApp._fen(self, value)
         self.initialise()
 
     def _restart(self):
+        """
+Delete all memory from played variations and start again
+"""
         yield from self._fen(self.fen)
 
     def _new(self):
+        """
+Set the board in an initial position of game of chess."""
         yield from MainApp._new(self)
         self.initialise()
 
     def _time(self, value: int):
+        """
+Set the time as an argument in seconds, how long engine will think on its move
+
+time <arg: int>
+
+e.g. time 10
+"""
         self.limit = Limit(time=value)
 
     def _back(self):
         yield self.payload("Can't take back during serious game.")
 
     def _decide(self, value: str):
+        """
+Make an arbitrary decision what is the outcome of the reached position.
+
+decide white_wins|black_wins|draw
+"""
         if self.current_node.parent is not None:
             parent = self.current_node.parent
-            if value == "white wins":
+            if value == "white_wins":
                 parent.outcome = Outcome(winner=chess.WHITE, termination=Termination.VARIANT_WIN)
-            elif value == "black wins":
+            elif value == "black_wins":
                 parent.outcome = Outcome(winner=chess.BLACK, termination=Termination.VARIANT_LOSS)
             elif value == "draw":
                 parent.outcome = Outcome(winner=None, termination=Termination.VARIANT_DRAW)

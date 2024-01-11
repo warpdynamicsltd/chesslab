@@ -42,12 +42,7 @@ class Line:
         score_rw = self.score.white()
         if score_rw.is_mate():
             mate = score_rw.mate()
-            if mate > 0:
-                return f"#{mate}"
-            elif mate < 0:
-                return f"-#{mate}"
-            else:
-                return f"#{mate}"
+            return f"#{mate}"
         else:
             return f"{score_rw.score()/100:.2f}"
 
