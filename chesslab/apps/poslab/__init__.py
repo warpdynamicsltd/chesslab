@@ -123,6 +123,8 @@ class Node:
 
 class PosLab(MainApp):
     """
+PosLab
+
 An application to practice winning position by
 playing different variations against the engine.
 For the first time engine plays optimally
@@ -131,8 +133,10 @@ When you play again, it deviates from the previous variations
 to test your play.
 Human player always has first move regardless of color.
 
-read about following commands: again, decide
-"""
+read about following commands: again, decide"""
+
+    cmd = "poslab"
+
     def __init__(self, main_app):
         MainApp.__init__(self)
         self.__dict__ = main_app.__dict__

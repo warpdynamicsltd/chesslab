@@ -14,6 +14,7 @@ from multiprocessing import Process, Queue
 from queue import Empty
 from chesslab.apps import MainApp, Payload
 from chesslab.apps.poslab import PosLab
+from chesslab.apps.tactics import TacticsLab
 
 
 def convert_svg_to_png(svg_string):
@@ -22,13 +23,23 @@ def convert_svg_to_png(svg_string):
     return output
 
 
-apps = {
-    'poslab': PosLab
-}
+def inheritors(klass):
+    subclasses = set()
+    work = [klass]
+    while work:
+        parent = work.pop()
+        for child in parent.__subclasses__():
+            if child not in subclasses:
+                subclasses.add(child)
+                work.append(child)
+    return subclasses
+
+
+apps = {cls.cmd: cls for cls in inheritors(MainApp)}
 
 
 def processor(in_queue, out_queue):
-    app = PosLab.app()
+    app = MainApp.app()
 
     out_queue.put(app.start())
 

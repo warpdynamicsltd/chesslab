@@ -4,7 +4,7 @@ from chess import Board, Move, Color
 
 
 class Puzzle:
-    def __init__(self, fen, uci_moves_string, title=str()):
+    def __init__(self, fen, uci_moves_string, title=str(), flipped=False):
         self.title=title
         uci_moves = uci_moves_string.split()
         self.moves = [Move.from_uci(move) for move in uci_moves]
@@ -14,6 +14,7 @@ class Puzzle:
 
         self.moves_san = self.moves_to_san()
         self.first_move_san = self.moves_san[0]
+        self.flipped = flipped
 
         self.board.push(self.first_move)
 
@@ -52,6 +53,9 @@ class Puzzle:
         exporter = chess.pgn.StringExporter(headers=False, variations=True, comments=False)
         pgn_string = game.accept(exporter)
         return pgn_string
+
+    def direction_str(self):
+        return "\u2191" if (self.board.turn and not self.flipped) or (not self.board.turn and self.flipped) else "\u2193"
 
     def jupyter_dsp(self, display, size=400, flipped=False, show_title=False, coordinates=False):
         if show_title:

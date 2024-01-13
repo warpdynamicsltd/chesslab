@@ -16,6 +16,7 @@ from chess import Board, Move, Color
 from chess.engine import SimpleEngine, Limit, PovScore
 
 from chesslab.engine import ChesslabEngine
+import chesslab.scripts
 
 
 def convert_svg_to_png(svg_string):
@@ -46,15 +47,7 @@ class Payload:
 
 
 class MainApp:
-    """
-Chesslab - base Chesslab application
-
-applications available:
-
-poslab
-
-commands available: """
-
+    cmd = None
     copyright_str = f"Copyright (c) Michal Stanislaw Wojcik 2023. All rights reserved."
     program_data_path = os.path.join(os.path.expanduser('~'), '.chesslab')
     pkl_file_path = os.path.join(program_data_path, 'chesslab.pkl')
@@ -78,6 +71,7 @@ commands available: """
         app.fen = obj.fen
         app.engine_path = obj.engine_path
         app.lines = obj.lines
+        app.df = obj.df
         return app
 
     def __init__(self, size=600):
@@ -89,7 +83,7 @@ commands available: """
         self.fen = chess.STARTING_BOARD_FEN
         self.engine_path = None
         self.lines = 5
-        # self.load()
+        self.df = None
 
     def _status(self, value):
         """
@@ -191,7 +185,9 @@ e.g. status chess_engine"""
         if hasattr(self, f'_{cmd}'):
             # args = value.split()
             # args = [self.arg_to_str_if_needed(arg) for arg in args]
-            args = shlex.split(value)
+            s = shlex.shlex(value)
+            s.whitespace_split = True
+            args = list(s)
             method = getattr(self, f'_{cmd}')
             args = self.convert_arguments(method, args)
             res = method(*args)
@@ -348,11 +344,25 @@ e.g.
 help
 help fen"""
         if value is None:
+            doc = f"""
+Chesslab - base Chesslab application
+
+applications available:
+
+{MainApp.__subclasses__()}
+
+commands available: """
             res = str()
-            methods = inspect.getmembers(type(self), predicate=inspect.isfunction)
-            yield Payload.text(f"{self.__doc__}\n")
+            obj_class = type(self)
+            methods = inspect.getmembers(obj_class, predicate=inspect.isfunction)
+
+            if obj_class.__name__ != 'MainApp':
+                yield Payload.text(f"{obj_class.__doc__}\n")
+            else:
+                yield Payload.text(f"{doc}\n")
             names = [k[0] for k in methods]
             names.sort()
+
             for name in names:
                 if name[0:1] == '_' and name[0:2] != '__':
                     res += f'{name[1:]}\n'

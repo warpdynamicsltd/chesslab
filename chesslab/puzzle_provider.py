@@ -22,9 +22,9 @@ class PuzzleProvider:
         url = sample['GameUrl'].values[0]
         title = f"{url} ({rating})"
         puzzle = Puzzle(fen=fen, uci_moves_string=moves, title=title)
-        flipped = False if not self.rnd_flipped else random.choice([False, True])
+        puzzle.flipped = False if not self.rnd_flipped else random.choice([False, True])
         if display is not None:
-            puzzle.jupyter_dsp(display, size=size, flipped=flipped, show_title=show_title, coordinates=coordinates)
+            puzzle.jupyter_dsp(display, size=size, flipped=puzzle.flipped, show_title=show_title, coordinates=coordinates)
             if solution:
                 print(puzzle.solution())
         return puzzle
