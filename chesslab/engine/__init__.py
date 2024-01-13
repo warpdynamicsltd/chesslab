@@ -49,7 +49,7 @@ class Line:
 
 class ChesslabEngine:
     def __init__(self, path):
-        self.engine = SimpleEngine.popen_uci(path, creationflags=subprocess.CREATE_NO_WINDOW)
+        self.engine = SimpleEngine.popen_uci(path)
 
     def __enter__(self):
         return self
