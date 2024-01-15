@@ -72,6 +72,7 @@ class MainApp:
         app.engine_path = obj.engine_path
         app.lines = obj.lines
         app.df = obj.df
+        app.puzzle = obj.puzzle
         return app
 
     def __init__(self, size=600):
@@ -84,6 +85,11 @@ class MainApp:
         self.engine_path = None
         self.lines = 5
         self.df = None
+        self.puzzle = None
+        self.colors = {
+            'square dark': "#858383",
+            'square light': "#d9d7d7"
+        }
 
     def _status(self, value):
         """
@@ -91,7 +97,12 @@ Return a status of given attribute.
 
 status <arg>
 
-e.g. status chess_engine"""
+e.g. status chess_engine
+
+status fen
+shows stored FEN not FEN of current position to get current FEN type: current fen
+
+"""
 
         yield self.payload(str(getattr(self, value)))
 
@@ -118,7 +129,8 @@ e.g. status chess_engine"""
         return convert_svg_to_png(chess.svg.board(self.board,
                                                   size=self.size,
                                                   flipped=self.flipped,
-                                                  coordinates=self.coords)).getvalue()
+                                                  coordinates=self.coords,
+                                                  colors=self.colors)).getvalue()
 
     def payload(self, text=None):
         return Payload(text, self.board_png_data())
@@ -153,8 +165,11 @@ e.g. status chess_engine"""
 
     def convert_arguments(self, method, args):
         new_args = []
+
         for i, key in enumerate(signature(method).parameters):
             param = signature(method).parameters[key]
+            if param.name == 'args':
+                return args
             if i < len(args):
                 if param.annotation is not inspect._empty:
                     arg = param.annotation(args[i])
@@ -164,6 +179,9 @@ e.g. status chess_engine"""
                 arg = param.default
 
             new_args.append(arg)
+
+        if len(args) > len(signature(method).parameters):
+            raise Exception("too many arguments")
 
         return new_args
 
@@ -185,8 +203,10 @@ e.g. status chess_engine"""
         if hasattr(self, f'_{cmd}'):
             # args = value.split()
             # args = [self.arg_to_str_if_needed(arg) for arg in args]
-            s = shlex.shlex(value)
+            s = shlex.shlex(value, posix=True)
             s.whitespace_split = True
+            s.commenters = []
+            s.escape = []
             args = list(s)
             method = getattr(self, f'_{cmd}')
             args = self.convert_arguments(method, args)
@@ -273,14 +293,14 @@ Show which side is on move."""
     def set_fen(self):
         self.board = Board(self.fen)
 
-    def _fen(self, *args):
+    def _fen(self, value: str):
         """
 Set borad position in Forsyth–Edwards Notation (FEN).
 
 fen <arg: str>
 
-e.g. fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"""
-        self.fen = " ".join(args)
+e.g. fen "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" """
+        self.fen = value
         self.set_fen()
         yield self.payload()
 
@@ -300,7 +320,8 @@ Set how many lines of analysis you want to see.
 lines <arg: int>
 
 e.g. lines 5"""
-        self.lines = n
+        if n > 0:
+            self.lines = n
 
     def _analyse(self, t: int = 1):
         """
@@ -320,6 +341,25 @@ e.g. analyse 5"""
             text += ">>"
         yield Payload.text(text)
 
+    def _score(self, t: int = 1):
+        """
+Analyse given position for a time given as an argument in seconds
+and displays score.
+
+score <time: int>
+
+e.g. score 5"""
+        if self.engine_path is None:
+            yield self.payload("no engine")
+            return
+        with ChesslabEngine(self.engine_path) as engine:
+            lines = engine.analyse(self.board, Limit(int(t)), self.lines)
+            text = f'analysis [{t} sec] <<\n'
+            for i, line in enumerate(lines):
+                text = line.score_str()
+                yield Payload.text(text)
+                break
+
     def _pgn(self):
         """
 Print sequence of moves in console."""
@@ -333,6 +373,26 @@ Print sequence of moves in console."""
         exporter = chess.pgn.StringExporter(headers=False, variations=True, comments=False)
         pgn_string = game.accept(exporter)
         yield Payload.text(pgn_string)
+
+    def _color(self, key: str, value: str):
+        """
+Change color of a given board element.
+
+color <key: str> <value: str>
+
+Possible keys are square light, square dark, square light lastmove, square dark lastmove, margin, coord, inner border, outer border, arrow green, arrow blue, arrow red, and arrow yellow. Values should look like #ffce9e (opaque), or #15781B80 (transparent)"""
+        self.colors[key] = value
+        yield self.payload()
+
+    def _current(self, key: str):
+        """
+Show current values:
+
+current fen
+"""
+        if key == 'fen':
+            yield Payload.text(self.board.fen())
+            return
 
     def _help(self, value: str = None):
         """

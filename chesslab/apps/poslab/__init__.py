@@ -18,6 +18,8 @@ class Node:
         self.parent = None
         self.outcome = None
         self.eval_score = None
+        self.bookmark = False
+        self.fen = None
 
     def get_score_from_lines_copy(self):
         index = 0
@@ -142,10 +144,12 @@ read about following commands: again, decide"""
         self.__dict__ = main_app.__dict__
         self.engine_color = None
         self.current_node = None
+        self.board_node = None
         self.limit = Limit(time=1)
         self.fen = self.board.fen()
         self.set_fen()
         self.initialise()
+        self.human_moved = False
 
     def start(self):
         return self.payload(f"PosLab\n{MainApp.copyright_str}")
@@ -153,6 +157,9 @@ read about following commands: again, decide"""
     def initialise(self):
         self.engine_color = (not self.board.turn)
         self.current_node = Node(self.board.turn)
+        self.current_node.fen = self.board.fen()
+        self.board_node = self.current_node
+        self.human_moved = False
 
     def make_move(self, move):
         self.board.push(move)
@@ -167,12 +174,19 @@ read about following commands: again, decide"""
             self.current_node.children[key] = node
 
         self.current_node = node
+        self.current_node.fen = self.board.fen()
+        self.board_node = self.current_node
+
+    def bookmark_info_string(self):
+        if self.current_node.bookmark:
+            yield Payload.text("POSITION BOOKMARKED")
 
     def go(self, move):
         print('*')
         text = None
         if self.current_node.outcome is None:
             self.make_move(move)
+            self.human_moved = True
             yield from self.send_pos_status()
             yield self.payload(self.get_current_outcome_str())
 
@@ -184,12 +198,16 @@ read about following commands: again, decide"""
                 yield from self.send_pos_status()
             else:
                 yield Payload.text(self.current_node.outcome.result())
+                yield from self.bookmark_info_string()
                 return
         else:
+            yield from self.send_pos_status()
             yield Payload.text(self.current_node.outcome.result())
+            yield from self.bookmark_info_string()
             return
 
         yield self.payload(self.get_current_outcome_str())
+        yield from self.bookmark_info_string()
 
     def choose_engine_move(self):
         print('engine_color', self.engine_color)
@@ -207,34 +225,49 @@ read about following commands: again, decide"""
         return move
 
     def rewind_and_back_propagate_outcome(self):
-        assert(self.current_node.outcome is not None)
-
+        if self.current_node.outcome is not None:
         # determine if this is human success
-        if self.current_node.outcome.winner is None:
-            self.current_node.human_success = True
-        if self.current_node.outcome.winner == (not self.engine_color):
-            self.current_node.human_success = True
+            if self.current_node.outcome.winner is None:
+                self.current_node.human_success = True
+            if self.current_node.outcome.winner == (not self.engine_color):
+                self.current_node.human_success = True
 
         human_success = self.current_node.human_success
 
+        bookmarked_node = None
         # back propagate human success
         while self.current_node.parent is not None:
             self.current_node = self.current_node.parent
+            if bookmarked_node is None and self.current_node.bookmark:
+                bookmarked_node = self.current_node
             if human_success:
                 self.current_node.human_success = True
 
         self.current_node.eval_score = 0
         self.current_node.clear_evals()
+        if bookmarked_node is not None:
+            self.current_node = bookmarked_node
+            # self.current_node.bookmark = False
+
+    def _bookmark(self, value: str = None):
+        if value is None:
+            self.current_node.bookmark = True
+        else:
+            self.current_node.bookmark = False
 
     def _again(self):
         """
 Play the position again against the engine.
 Your previous variations are remembered and used to choose different variations to play."""
-        if self.current_node.outcome is None:
+        if self.human_moved and self.current_node.outcome is None:
             yield Payload.text("Can't start again with unknown outcome")
             return
         self.rewind_and_back_propagate_outcome()
-        yield from MainApp._again(self)
+        while id(self.current_node) != id(self.board_node):
+            self.board_node = self.board_node.parent
+            self.board.pop()
+        self.human_moved = False
+        yield self.payload()
 
     def _fen(self, value: str):
         """
@@ -280,9 +313,9 @@ decide white_wins|black_wins|draw
 """
         if self.current_node.parent is not None:
             parent = self.current_node.parent
-            if value == "white_wins":
+            if value == "white-wins":
                 parent.outcome = Outcome(winner=chess.WHITE, termination=Termination.VARIANT_WIN)
-            elif value == "black_wins":
+            elif value == "black-wins":
                 parent.outcome = Outcome(winner=chess.BLACK, termination=Termination.VARIANT_LOSS)
             elif value == "draw":
                 parent.outcome = Outcome(winner=None, termination=Termination.VARIANT_DRAW)

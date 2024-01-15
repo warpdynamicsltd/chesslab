@@ -25,22 +25,31 @@ read about following commands: next, info, solve, again, decide
 
         if self.df is None:
             self.df = pd.read_csv('data/lichess_db_puzzle.csv.zst')
-        self.easy_rating = 1400
-        self.medium_rating = 1500
-        self.hard_rating = 1700
-        self.extreme_rating = 2000
 
-        self.df_easy = PuzzleProvider.create_set(self.df, rating=self.easy_rating)
-        self.df_medium = PuzzleProvider.create_set(self.df, rating=self.medium_rating)
-        self.df_hard = PuzzleProvider.create_set(self.df, rating=self.hard_rating)
-        self.df_extreme = PuzzleProvider.create_set(self.df, rating=self.extreme_rating)
+        self.ratings = [1400, 1500, 1700, 2000]
+        self.probs = [0.5, 0.2, 0.2, 0.1]
 
-        self.pp = PuzzleProvider(training_sets=[self.df_easy, self.df_medium, self.df_hard, self.df_extreme], weights=[0.5, 0.2, 0.2, 0.1])
+        self.create_puzzle_provider()
+
         self.pp.rnd_flipped = True
         self.puzzle = None
 
+    def create_puzzle_provider(self):
+        training_sets = [PuzzleProvider.create_set(self.df, rating=rating) for rating in self.ratings]
+        if len(self.ratings) != len(self.probs):
+            raise Exception("there must be the same ratings as probs")
+        self.pp = PuzzleProvider(training_sets=training_sets, weights=self.probs)
+
     def start(self):
         return self.payload(f"TacticsLab\n{MainApp.copyright_str}")
+
+    def _ratings(self, *args):
+        self.ratings = list(map(int, args))
+        self.create_puzzle_provider()
+
+    def _probs(self, *args):
+        self.probs = list(map(float, args))
+        self.create_puzzle_provider()
 
     def _info(self):
         """

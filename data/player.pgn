@@ -2934,3 +2934,31 @@ Rg7 Rh8 40. Kb4 Rc8 41. Kc5 Rc7 42. Rg6 Kb7 43. Re6 Rc8 44. Re3 Kc7 45. Re7+
 Kb8 46. Kd6 Ka8 47. Rc7 Rxc7 48. Kxc7 a6 49. Kxc6 Ka7 50. Kc7 a5 51. d5 a4 52.
 d6 b4 53. d7 1-0
 
+[Event "Computer chess game"]
+[Site "Computer"]
+[Date "2024.01.13"]
+[Round "?"]
+[White "Fidelity SC9-D Sensory Chess Challenger 9-D"]
+[Black "Player"]
+[Result "0-1"]
+[Time "21:45:27"]
+[Termination "normal"]
+[PlyCount "144"]
+[WhiteType "program"]
+[BlackType "human"]
+[WhiteScore "-20.53"]
+[BlackScore "-25.94"]
+
+1. e4 e6 2. d4 d5 3. Nc3 Nf6 4. Bg5 Be7 5. e5 Nfd7 6. Bxe7 Qxe7 7. f4 c6 8. Nf3
+O-O 9. Bd3 h6 10. O-O Nb6 11. a4 a5 12. Qe2 Na6 13. Qd2 Nb4 14. Rae1 Nxd3 15.
+Qxd3 Nd7 16. Ne2 c5 17. b3 b6 18. c3 cxd4 19. Nexd4 Qc5 20. c4 Ba6 21. Nd2 dxc4
+22. Nxc4 Bxc4 23. bxc4 Rad8 24. Rd1 Nb8 25. Rfe1 Nc6 26. Re4 Rd7 27. Rb1 Nxd4
+28. Kh1 Rfd8 29. Ree1 Nf5 30. Qb3 Rd4 31. Qxb6 Qxb6 32. Rxb6 Rd1 33. Rg1 Rxg1+
+34. Kxg1 Rd4 35. c5 Rxa4 36. Rb8+ Kh7 37. c6 Rc4 38. Ra8 Rc5 39. Kf2 Ne7 40. c7
+Rxc7 41. Rxa5 Nd5 42. f5 Rc4 43. fxe6 fxe6 44. Ra6 Nc7 45. Rd6 Rc5 46. Rd7 Nb5
+47. Kf3 Rxe5 48. Re7 Re1 49. Kf4 Nd4 50. Kg4 e5 51. Kh5 e4 52. Kg4 e3 53. Rd7
+e2 54. Rxd4 Rd1 55. Re4 e1=Q 56. Rxe1 Rxe1 57. Kf3 g5 58. Kf2 Re8 59. Kg3 h5
+60. h4 gxh4+ 61. Kxh4 Re2 62. Kxh5 Rxg2 63. Kh4 Kg6 64. Kh3 Rg5 65. Kh4 Kf5 66.
+Kh3 Kf4 67. Kh4 Rg8 68. Kh5 Rg1 69. Kh6 Kf5 70. Kh7 Kf6 71. Kh8 Kf7 72. Kh7
+Rh1# 0-1
+
