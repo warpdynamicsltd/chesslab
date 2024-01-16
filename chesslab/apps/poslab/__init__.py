@@ -139,9 +139,11 @@ read about following commands: again, decide"""
 
     cmd = "poslab"
 
-    def __init__(self, main_app):
+    def __init__(self, main_app=None):
         MainApp.__init__(self)
-        self.__dict__ = main_app.__dict__
+        if main_app is not None:
+            main_app.copy_attrs(self)
+
         self.engine_color = None
         self.current_node = None
         self.board_node = None
@@ -309,7 +311,7 @@ e.g. time 10
         """
 Make an arbitrary decision what is the outcome of the reached position.
 
-decide white_wins|black_wins|draw
+decide white-wins|black-wins|draw
 """
         if self.current_node.parent is not None:
             parent = self.current_node.parent

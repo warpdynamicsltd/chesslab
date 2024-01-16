@@ -40,6 +40,9 @@ apps = {cls.cmd: cls for cls in inheritors(MainApp)}
 
 def processor(in_queue, out_queue):
     app = MainApp.app()
+    app.apps = apps
+    # make sure pickle object is compatible with code version
+    app = app.create_from(app)
 
     out_queue.put(app.start())
 

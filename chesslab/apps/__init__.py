@@ -16,7 +16,6 @@ from chess import Board, Move, Color
 from chess.engine import SimpleEngine, Limit, PovScore
 
 from chesslab.engine import ChesslabEngine
-import chesslab.scripts
 
 
 def convert_svg_to_png(svg_string):
@@ -52,6 +51,28 @@ class MainApp:
     program_data_path = os.path.join(os.path.expanduser('~'), '.chesslab')
     pkl_file_path = os.path.join(program_data_path, 'chesslab.pkl')
 
+    attrs_to_copy = [
+        'board',
+        'size',
+        'debug',
+        'flipped',
+        'coords',
+        'fen',
+        'engine_path',
+        'lines',
+        'df',
+        'puzzle',
+        'pp',
+        'probs',
+        'ratings',
+        'engine_color',
+        'current_node',
+        'board_node',
+        'limit',
+        'human_moved',
+        'apps'
+    ]
+
     @classmethod
     def app(cls):
         if os.path.isfile(cls.pkl_file_path):
@@ -61,18 +82,9 @@ class MainApp:
             return MainApp()
 
     @classmethod
-    def convert_from(cls, obj):
-        app = MainApp()
-        app.board = obj.board
-        app.size = obj.size
-        app.debug = obj.debug
-        app.flipped = obj.flipped
-        app.coords = obj.coords
-        app.fen = obj.fen
-        app.engine_path = obj.engine_path
-        app.lines = obj.lines
-        app.df = obj.df
-        app.puzzle = obj.puzzle
+    def create_from(cls, obj):
+        app = cls()
+        obj.copy_attrs(app)
         return app
 
     def __init__(self, size=600):
@@ -86,10 +98,16 @@ class MainApp:
         self.lines = 5
         self.df = None
         self.puzzle = None
+        self.apps = None
         self.colors = {
             'square dark': "#858383",
             'square light': "#d9d7d7"
         }
+
+    def copy_attrs(self, target):
+        for attr_name in MainApp.attrs_to_copy:
+            if hasattr(self, attr_name) and hasattr(target, attr_name):
+                setattr(target, attr_name, getattr(self, attr_name))
 
     def _status(self, value):
         """
@@ -123,7 +141,7 @@ shows stored FEN not FEN of current position to get current FEN type: current fe
         return self.payload(f"Chesslab\n{MainApp.copyright_str}")
 
     def exit(self):
-        return MainApp.convert_from(self)
+        return MainApp.create_from(self)
 
     def board_png_data(self):
         return convert_svg_to_png(chess.svg.board(self.board,
@@ -409,7 +427,7 @@ Chesslab - base Chesslab application
 
 applications available:
 
-{MainApp.__subclasses__()}
+{self.apps}
 
 commands available: """
             res = str()
