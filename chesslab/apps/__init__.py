@@ -99,6 +99,7 @@ class MainApp:
         self.df = None
         self.puzzle = None
         self.apps = None
+        self.refresh = True
         self.colors = {
             'square dark': "#858383",
             'square light': "#d9d7d7"
@@ -151,7 +152,10 @@ shows stored FEN not FEN of current position to get current FEN type: current fe
                                                   colors=self.colors)).getvalue()
 
     def payload(self, text=None):
-        return Payload(text, self.board_png_data())
+        if self.refresh:
+            return Payload(text, self.board_png_data())
+        else:
+            return Payload.text(text)
 
     def send_pos_status(self):
         if self.board.is_checkmate():
@@ -401,6 +405,18 @@ color <key: str> <value: str>
 Possible keys are square light, square dark, square light lastmove, square dark lastmove, margin, coord, inner border, outer border, arrow green, arrow blue, arrow red, and arrow yellow. Values should look like #ffce9e (opaque), or #15781B80 (transparent)"""
         self.colors[key] = value
         yield self.payload()
+
+    def _refresh(self, value: str):
+        """
+Turn on and off refreshing chessboard. Use for blindfold chess training.
+
+refresh on|off
+        """
+        if value == "on":
+            self.refresh = True
+            yield self.payload()
+        else:
+            self.refresh = False
 
     def _current(self, key: str):
         """
