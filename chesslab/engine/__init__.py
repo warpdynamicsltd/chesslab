@@ -12,6 +12,11 @@ class Line:
         else:
             self.moves = []
 
+        if 'nodes' in info:
+            self.nodes = info['nodes']
+        else:
+            self.nodes = 0
+
     def key(self):
         if self.moves:
             return self.moves[0].uci()

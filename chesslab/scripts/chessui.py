@@ -1,7 +1,9 @@
 import time
 import io
 import sys
+import sys
 import traceback
+from importlib.resources import files
 
 import cairosvg
 import chess
@@ -15,7 +17,6 @@ from queue import Empty
 from chesslab.apps import MainApp, Payload
 from chesslab.apps.poslab import PosLab
 from chesslab.apps.tactics import TacticsLab
-
 
 def convert_svg_to_png(svg_string):
     output = io.BytesIO()
@@ -86,6 +87,7 @@ def processor(in_queue, out_queue):
 
 # Create the main window
 def main():
+    print(files('chesslab'))
     in_queue = Queue()
     out_queue = Queue()
     p = Process(target=processor, args=(in_queue, out_queue))

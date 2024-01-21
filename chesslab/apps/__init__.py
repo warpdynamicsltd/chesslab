@@ -345,21 +345,36 @@ e.g. lines 5"""
         if n > 0:
             self.lines = n
 
-    def _analyse(self, t: int = 1):
+    def parse_limit(self, arg_name, value):
+        if arg_name == 'nodes' and type(value) is str:
+            if value[-1] == 'k':
+                value = 1000 * float(str(value[:-1]))
+            elif value[-1] == 'm':
+                value = 1000000 * float(str(value[:-1]))
+
+        return Limit(**{arg_name: value})
+
+    def _analyse(self, arg_name: str = 'time', value=1.0):
         """
 Analyse given position for a time given as an argument in seconds.
 
-analyse <time: int>
+analyse <arg_name: str> <value>
 
-e.g. analyse 5"""
+e.g.
+analyse time 5
+analyse nodes 100
+analyse nodes 2.5k
+analyse nodes 3.1m"""
+
         if self.engine_path is None:
             yield self.payload("no engine")
             return
         with ChesslabEngine(self.engine_path) as engine:
-            lines = engine.analyse(self.board, Limit(int(t)), self.lines)
-            text = f'analysis [{t} sec] <<\n'
+            limit = self.parse_limit(arg_name, value)
+            lines = engine.analyse(self.board, limit, self.lines)
+            text = f'analysis [{limit}] <<\n'
             for i, line in enumerate(lines):
-                text += f"{i + 1}. ({line.score_str()}) {line.png(self.board)}\n"
+                text += f"{i + 1}. ({line.score_str()}) {line.png(self.board)} | nodes={line.nodes}\n"
             text += ">>"
         yield Payload.text(text)
 

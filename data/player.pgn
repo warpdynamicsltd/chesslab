@@ -3018,3 +3018,127 @@ Qg7# 0-1
 Bxd5 9. Nc3 Bb7 10. Ng5 Bxg2 11. Kxg2 h6 12. Nge4 Nxe4 13. Nxe4 Qd5 14. f3 Rd8
 15. Rc1 f5 16. Rxc7 fxe4 17. Rxe7 exf3+ 18. Rxf3 Rd7 19. Re8+ Kh7 20. Qb1+ 1-0
 
+[Event "Computer chess game"]
+[Site "Computer"]
+[Date "2024.01.18"]
+[Round "?"]
+[White "Fidelity SC9-D Sensory Chess Challenger 9-D"]
+[Black "Player"]
+[Result "1-0"]
+[Time "20:19:10"]
+[Termination "normal"]
+[PlyCount "49"]
+[WhiteType "program"]
+[BlackType "human"]
+[WhiteScore "-11.64"]
+[BlackScore "-28.92"]
+
+1. c4 e6 2. Nf3 Nf6 3. g3 d5 4. Bg2 h6 5. O-O b6 6. cxd5 exd5 7. b3 Be7 8. Bb2
+O-O 9. Nc3 Bb7 10. d4 Re8 11. Ne5 c6 12. Qd3 Bd6 13. Qf5 Qc8 14. Qxc8 Bxc8 15.
+e4 Bb7 16. exd5 cxd5 17. Nb5 Rd8 18. Nxd6 Rxd6 19. Rac1 Nc6 20. Ba3 Re6 21. Bh3
+Nxd4 22. Bxe6 Ne2+ 23. Kh1 Nxc1 24. Bxf7+ Kh8 25. Rxc1 1-0
+
+[Event "Computer chess game"]
+[Site "Computer"]
+[Date "2024.01.19"]
+[Round "?"]
+[White "Fidelity SC9-D Sensory Chess Challenger 9-D"]
+[Black "Player"]
+[Result "1-0"]
+[Time "15:36:43"]
+[Termination "normal"]
+[PlyCount "41"]
+[WhiteType "program"]
+[BlackType "human"]
+[WhiteScore "-19.9"]
+[BlackScore "-61.9"]
+
+1. c4 Nf6 2. Nc3 e6 3. e4 b6 4. e5 Ng8 5. Nf3 Bb7 6. Be2 Nc6 7. d4 d5 8. cxd5
+exd5 9. O-O h6 10. Bd3 Bb4 11. Nb5 a6 12. Nc3 Nge7 13. Ne2 b5 14. a3 Ba5 15. b4
+Bb6 16. Bb2 Qd7 17. Rc1 Nf5 18. Qc2 Nfe7 19. Nf4 g5 20. Nh5 Qg4 21. Nf6+ 1-0
+
+[Event "Computer chess game"]
+[Site "Computer"]
+[Date "2024.01.19"]
+[Round "?"]
+[White "Fidelity SC9-D Sensory Chess Challenger 9-D"]
+[Black "Player"]
+[Result "1-0"]
+[Time "16:33:30"]
+[Termination "normal"]
+[PlyCount "75"]
+[WhiteType "program"]
+[BlackType "human"]
+[WhiteScore "-46.39"]
+[BlackScore "-53.35"]
+
+1. d4 Nf6 2. c4 e6 3. Nc3 d5 4. Bf4 Bd6 5. Bxd6 Qxd6 6. c5 Qd8 7. e3 O-O 8. Bd3
+c6 9. Nf3 h6 10. O-O Nbd7 11. Rc1 Re8 12. Ne5 Qc7 13. f4 Nxe5 14. fxe5 Nd7 15.
+e4 Nf8 16. Qh5 Qe7 17. Rc2 Ng6 18. exd5 Qg5 19. Qf3 Rf8 20. dxc6 bxc6 21. Qxc6
+Rb8 22. Bxg6 Qxg6 23. Qe4 Qg5 24. c6 Ba6 25. Ne2 Rb6 26. Qf3 Qg6 27. Rfc1 f6
+28. Nf4 Qf7 29. Qg4 fxe5 30. Ne2 exd4 31. Qxd4 Rb5 32. c7 Rf5 33. Kh1 Bxe2 34.
+c8=R Rf1+ 35. Rxf1 Qxf1+ 36. Qg1 Kh7 37. Rxf8 Qxf8 38. Rxe2 1-0
+
+[Event "Computer chess game"]
+[Site "Computer"]
+[Date "2024.01.19"]
+[Round "?"]
+[White "Fidelity SC9-D Sensory Chess Challenger 9-D"]
+[Black "Player"]
+[Result "1-0"]
+[Time "18:44:52"]
+[Termination "normal"]
+[PlyCount "39"]
+[WhiteType "program"]
+[BlackType "human"]
+[WhiteScore "-29.7"]
+[BlackScore "-51.68"]
+
+1. e4 e6 2. d4 d5 3. Nc3 Nf6 4. Bg5 Be7 5. e5 Nfd7 6. Bxe7 Qxe7 7. f4 O-O 8.
+Qd2 Nc6 9. Nf3 a6 10. Bd3 h6 11. O-O-O b5 12. f5 f6 13. fxe6 Qxe6 14. exf6 Nxf6
+15. Rde1 Qg4 16. Ne5 Nxe5 17. dxe5 d4 18. Ne2 Nd5 19. Nxd4 Qxd4 20. Bh7+ 1-0
+
+[Event "Computer chess game"]
+[Site "Computer"]
+[Date "2024.01.20"]
+[Round "?"]
+[White "Fidelity SC9-D Sensory Chess Challenger 9-D"]
+[Black "Player"]
+[Result "1-0"]
+[Time "00:27:18"]
+[Termination "normal"]
+[PlyCount "35"]
+[WhiteType "program"]
+[BlackType "human"]
+[WhiteScore "-39.33"]
+[BlackScore "-53.59"]
+
+1. e4 e6 2. d4 d5 3. Nc3 Nf6 4. Bg5 Bb4 5. e5 h6 6. Bd2 Nfd7 7. Nf3 c5 8. Bb5
+Qb6 9. dxc5 Bxc5 10. O-O a6 11. Bxd7+ Bxd7 12. Rb1 O-O 13. b4 Bd4 14. Nxd4 Qxd4
+15. Re1 Nc6 16. Na4 Nxe5 17. Nc5 b6 18. Nb3 1-0
+
+[Event "Computer chess game"]
+[Site "Computer"]
+[Date "2024.01.20"]
+[Round "?"]
+[White "Fidelity SC9-D Sensory Chess Challenger 9-D"]
+[Black "Player"]
+[Result "1-0"]
+[Time "14:40:05"]
+[Termination "normal"]
+[PlyCount "111"]
+[WhiteType "program"]
+[BlackType "human"]
+[WhiteScore "-8.75"]
+[BlackScore "-24.42"]
+
+1. d4 e6 2. g3 d5 3. Bg2 Nf6 4. Nf3 b6 5. O-O Ba6 6. Bf4 Bd6 7. Bxd6 Qxd6 8.
+Nc3 O-O 9. Rb1 c5 10. dxc5 bxc5 11. Ng5 h6 12. Nge4 Nxe4 13. Nxe4 Qc6 14. Nd2
+Qc7 15. c4 Bb7 16. Qb3 Rd8 17. cxd5 Bxd5 18. Nc4 Bxg2 19. Kxg2 Nc6 20. Rbd1 Na5
+21. Nxa5 Qxa5 22. a3 Rab8 23. Rxd8+ Rxd8 24. Rd1 Rxd1 25. Qxd1 Qb6 26. Qd2 Kf8
+27. e4 Ke7 28. Qc3 g6 29. Kf3 Qc6 30. Ke3 Qd6 31. f4 f5 32. Qg7+ Kd8 33. Qf6+
+Kd7 34. Qf7+ Kd8 35. Qg8+ Kd7 36. Qh7+ Kd8 37. Qh8+ Kd7 38. Qf6 fxe4 39. Qf7+
+Kd8 40. Qg8+ Kd7 41. Qg7+ Kd8 42. Kxe4 Qd5+ 43. Ke3 Qb3+ 44. Kd2 Qd5+ 45. Kc3
+Qf3+ 46. Kc4 Qd5+ 47. Kb5 Qd3+ 48. Kxc5 Qd5+ 49. Kb4 a5+ 50. Ka4 Qc6+ 51. Kxa5
+Qc5+ 52. Ka4 Qc4+ 53. b4 Qc6+ 54. b5 Qc4+ 55. Ka5 Qc3+ 56. Qxc3 1-0
+

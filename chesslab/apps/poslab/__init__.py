@@ -304,6 +304,19 @@ e.g. time 10
 """
         self.limit = Limit(time=value)
 
+    def _limit(self, arg_name: str = 'time', value=1.0):
+        """
+Limit engine player strength
+
+limit <arg_name: str> <value>
+
+e.g.
+limit time 5
+limit nodes 100
+limit nodes 2.5k
+limit nodes 3.1m"""
+        self.limit = self.parse_limit(arg_name, value)
+
     def _back(self):
         yield self.payload("Can't take back during serious game.")
 
@@ -313,15 +326,24 @@ Make an arbitrary decision what is the outcome of the reached position.
 
 decide white-wins|black-wins|draw
 """
-        if self.current_node.parent is not None:
-            parent = self.current_node.parent
+        # if self.current_node.parent is not None:
+        #     parent = self.current_node.parent
+        #     if value == "white-wins":
+        #         parent.outcome = Outcome(winner=chess.WHITE, termination=Termination.VARIANT_WIN)
+        #     elif value == "black-wins":
+        #         parent.outcome = Outcome(winner=chess.BLACK, termination=Termination.VARIANT_LOSS)
+        #     elif value == "draw":
+        #         parent.outcome = Outcome(winner=None, termination=Termination.VARIANT_DRAW)
+        #     self.current_node.outcome = parent.outcome
+
+        if self.current_node.outcome is None:
+            node = self.current_node
             if value == "white-wins":
-                parent.outcome = Outcome(winner=chess.WHITE, termination=Termination.VARIANT_WIN)
+                node.outcome = Outcome(winner=chess.WHITE, termination=Termination.VARIANT_WIN)
             elif value == "black-wins":
-                parent.outcome = Outcome(winner=chess.BLACK, termination=Termination.VARIANT_LOSS)
+                node.outcome = Outcome(winner=chess.BLACK, termination=Termination.VARIANT_LOSS)
             elif value == "draw":
-                parent.outcome = Outcome(winner=None, termination=Termination.VARIANT_DRAW)
-            self.current_node.outcome = parent.outcome
+                node.outcome = Outcome(winner=None, termination=Termination.VARIANT_DRAW)
             yield Payload.text(self.current_node.outcome.result())
         else:
             yield Payload.text("Can't decide outcome at root position.")

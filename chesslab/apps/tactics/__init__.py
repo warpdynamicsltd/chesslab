@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import chess
 from chesslab.engine import ChesslabEngine
@@ -15,7 +16,7 @@ includes PosLab
 
 An application to solve chess tactics puzzles downloaded from https://database.lichess.org/#puzzles
 
-read about following commands: next, info, solve, again, decide
+read about following commands: new, info, solve, again, decide
 """
     cmd = 'tactics'
 
@@ -25,7 +26,7 @@ read about following commands: next, info, solve, again, decide
             main_app.copy_attrs(self)
 
         if not hasattr(self, 'df') or self.df is None:
-            self.df = pd.read_csv('data/lichess_db_puzzle.csv.zst')
+            self.df = pd.read_csv(os.path.join(self.program_data_path, 'lichess_db_puzzle.csv.zst'))
 
         if not hasattr(self, 'ratings') or self.ratings is None:
             self.ratings = [1400, 1500, 1700, 2000]
