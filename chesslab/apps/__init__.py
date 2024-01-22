@@ -1,4 +1,5 @@
 import time
+import glob
 import pickle
 import io
 import os
@@ -7,6 +8,7 @@ import datetime
 import subprocess
 import inspect
 from inspect import signature
+from pathlib import Path
 
 import chess.svg
 import chess.pgn
@@ -47,8 +49,9 @@ class Payload:
 
 class MainApp:
     cmd = None
-    copyright_str = f"Copyright (c) Michal Stanislaw Wojcik 2023. All rights reserved."
+    copyright_str = f"Copyright (c) Michal Stanislaw Wojcik 2023."
     program_data_path = os.path.join(os.path.expanduser('~'), '.chesslab')
+    snapshot_dir = os.path.join(program_data_path, 'snapshots')
     pkl_file_path = os.path.join(program_data_path, 'chesslab.pkl')
 
     attrs_to_copy = [
@@ -83,6 +86,11 @@ class MainApp:
             return MainApp()
 
     @classmethod
+    def load_snapshot(cls, name):
+        with open(os.path.join(cls.snapshot_dir, name + '.pkl'), "rb") as f:
+            return pickle.load(f)
+
+    @classmethod
     def create_from(cls, obj):
         app = cls()
         obj.copy_attrs(app)
@@ -101,6 +109,7 @@ class MainApp:
         self.puzzle = None
         self.apps = None
         self.refresh = True
+        self.limit = None
         self.colors = {
             'square dark': "#858383",
             'square light': "#d9d7d7"
@@ -132,6 +141,21 @@ shows stored FEN not FEN of current position to get current FEN type: current fe
 
         with open(self.pkl_file_path, "wb") as f:
             pickle.dump(self, f)
+
+    def save_snapshot(self, name):
+        if not os.path.isdir(self.snapshot_dir):
+            os.mkdir(self.snapshot_dir)
+
+        with open(os.path.join(self.snapshot_dir, name + '.pkl'), "wb") as f:
+            pickle.dump(self, f)
+
+    def _save(self, name: str):
+        self.save_snapshot(name)
+        yield Payload.text("saved")
+
+    def _list(self):
+        for path in glob.glob(os.path.join(self.snapshot_dir, "*.pkl")):
+            yield Payload.text(Path(path).name[:-4])
 
     def load(self):
         if os.path.isfile(self.pkl_file_path):
@@ -172,13 +196,28 @@ shows stored FEN not FEN of current position to get current FEN type: current fe
 
         yield self.payload()
 
+    def fixed_outcome(self):
+        if self.board.outcome() is not None:
+            return self.board.outcome()
+
+        if self.board.is_repetition():
+            return chess.Outcome(chess.Termination.THREEFOLD_REPETITION)
+
+        if self.board.is_fifty_moves():
+            return chess.Outcome(chess.Termination.FIFTY_MOVES)
+
+        if self.board.is_stalemate():
+            return chess.Outcome(chess.Termination.STALEMATE)
+
+        return None
+
     def go(self, move):
         self.board.push(move)
         yield from self.send_pos_status()
         yield Payload.text(self.get_current_outcome_str())
 
     def get_current_outcome_str(self):
-        outcome = self.board.outcome(claim_draw=True)
+        outcome = self.fixed_outcome()
         if outcome is not None:
             return f"RESULT {outcome.result()}"
         return None

@@ -151,7 +151,8 @@ read about following commands: again, decide"""
         self.engine_color = None
         self.current_node = None
         self.board_node = None
-        self.limit = Limit(time=1)
+        if not hasattr(self, 'limit') or self.limit is None:
+            self.limit = Limit(time=1)
         self.fen = self.board.fen()
         self.set_fen()
         self.initialise()
@@ -180,7 +181,7 @@ read about following commands: again, decide"""
             node = Node(self.board.turn)
             node.parent = self.current_node
             if node.outcome is None:
-                node.outcome = self.board.outcome(claim_draw=True)
+                node.outcome = self.fixed_outcome()
             self.current_node.children[key] = node
 
         self.current_node = node
@@ -240,8 +241,8 @@ read about following commands: again, decide"""
         try:
             with chess.polyglot.open_reader(os.path.join(self.program_data_path, 'book.bin')) as reader:
                 board = Board(self.board.fen())
-                for entry in reader.find_all(board):
-                    print(entry.move, entry.weight, entry.learn)
+                # for entry in reader.find_all(board):
+                #     print(entry.move, entry.weight, entry.learn)
                 entry = reader.choice(board, random=random.Random())
                 return entry.move
         except IndexError as e:

@@ -61,13 +61,22 @@ def processor(in_queue, out_queue):
             app.save()
             return
 
+        if cmd == 'load':
+            app.save_snapshot('autosave')
+            app = app.load_snapshot(value)
+            out_queue.put(app.start())
+            out_queue.put(Payload.terminal())
+            continue
+
         if cmd in apps:
+            app.save_snapshot('autosave')
             app = apps[cmd](app)
             out_queue.put(app.start())
             out_queue.put(Payload.terminal())
             continue
 
         if cmd == 'exit':
+            app.save_snapshot('autosave')
             app = app.exit()
             out_queue.put(app.start())
             out_queue.put(Payload.terminal())
