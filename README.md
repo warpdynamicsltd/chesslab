@@ -29,7 +29,7 @@ you need the following steps:
     ```pip -r requrements.txt```
     If you only want to run `chesslab` ui script, minimal requirements are:
 
-    ```pip install chess cairosvg```
+    ```pip install chess cairosvg zstandard pandas```
 6. Install `chesslab` by e.g.:
 
     ```pip install .```
