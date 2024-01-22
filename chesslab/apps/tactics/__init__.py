@@ -16,7 +16,7 @@ includes PosLab
 
 An application to solve chess tactics puzzles downloaded from https://database.lichess.org/#puzzles
 
-read about following commands: new, info, solve, again, decide
+read about following commands: new, info, solve, again, decide, restart, go
 """
     cmd = 'tactics'
 

@@ -87,7 +87,6 @@ def processor(in_queue, out_queue):
 
 # Create the main window
 def main():
-    print(files('chesslab'))
     in_queue = Queue()
     out_queue = Queue()
     p = Process(target=processor, args=(in_queue, out_queue))

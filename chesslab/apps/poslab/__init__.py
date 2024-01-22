@@ -1,9 +1,13 @@
+import os
+import random
+
 import chess
 from chesslab.engine import ChesslabEngine
 from chesslab.apps import MainApp, Payload
 
 from chess import Move, Outcome, Termination
 from chess.engine import Limit, Cp, Mate, Score, PovScore
+import chess.polyglot
 from chess import Board
 
 
@@ -152,12 +156,16 @@ read about following commands: again, decide"""
         self.set_fen()
         self.initialise()
         self.human_moved = False
+        self.book = True
 
     def start(self):
         return self.payload(f"PosLab\n{MainApp.copyright_str}")
 
-    def initialise(self):
-        self.engine_color = (not self.board.turn)
+    def initialise(self, engine_color=None):
+        if engine_color is None:
+            self.engine_color = (not self.board.turn)
+        else:
+            self.engine_color = engine_color
         self.current_node = Node(self.board.turn)
         self.current_node.fen = self.board.fen()
         self.board_node = self.current_node
@@ -184,16 +192,30 @@ read about following commands: again, decide"""
             yield Payload.text("POSITION BOOKMARKED")
 
     def go(self, move):
-        print('*')
         text = None
         if self.current_node.outcome is None:
-            self.make_move(move)
-            self.human_moved = True
-            yield from self.send_pos_status()
-            yield self.payload(self.get_current_outcome_str())
+            if move is not None:
+                if self.engine_color == self.board.turn:
+                    yield Payload.text('Engine is on move now.\nType go for engine to move')
+                    return
+                self.make_move(move)
+                self.human_moved = True
+                yield from self.send_pos_status()
+                yield self.payload(self.get_current_outcome_str())
+            else:
+                if self.engine_color != self.board.turn:
+                    yield Payload.text('waiting for your move')
+                    return
 
             if self.current_node.outcome is None:
-                engine_move = self.choose_engine_move()
+                book_move = self.book_move()
+
+                if book_move is not None:
+                    engine_move = book_move
+                    yield Payload.text('book')
+                else:
+                    engine_move = self.choose_engine_move()
+
                 san_str = self.board.san(engine_move)
                 self.make_move(engine_move)
                 yield Payload.text(san_str)
@@ -204,15 +226,28 @@ read about following commands: again, decide"""
                 return
         else:
             yield from self.send_pos_status()
-            yield Payload.text(self.current_node.outcome.result())
+            yield self.payload(self.current_node.outcome.result())
             yield from self.bookmark_info_string()
             return
 
         yield self.payload(self.get_current_outcome_str())
         yield from self.bookmark_info_string()
 
+    def book_move(self):
+        if not self.book:
+            return None
+
+        try:
+            with chess.polyglot.open_reader(os.path.join(self.program_data_path, 'book.bin')) as reader:
+                board = Board(self.board.fen())
+                for entry in reader.find_all(board):
+                    print(entry.move, entry.weight, entry.learn)
+                entry = reader.choice(board, random=random.Random())
+                return entry.move
+        except IndexError as e:
+            return None
+
     def choose_engine_move(self):
-        print('engine_color', self.engine_color)
         if self.current_node.turn != self.engine_color:
             raise Exception("not engine move")
         if self.board.turn != self.engine_color:
@@ -282,11 +317,45 @@ e.g. fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"""
         yield from MainApp._fen(self, value)
         self.initialise()
 
-    def _restart(self):
+    def _restart(self, engine_color: str = None):
         """
 Delete all memory from played variations and start again
+
+restart - you plays first
+restart white - engine plays as white
+restart black - engine plays as black
 """
-        yield from self._fen(self.fen)
+        yield from MainApp._fen(self, self.fen)
+        if engine_color is None:
+            self.initialise()
+        else:
+            self.initialise(engine_color == 'white')
+
+    def _book(self, value: str):
+        """
+Turning on and off opening book.
+
+book on|off
+"""
+        self.book = (value == 'on')
+
+    def _onmove(self):
+        """
+Print who is on move """
+
+        if self.board.turn == self.engine_color:
+            yield Payload.text("engine")
+        else:
+            yield Payload.text("you")
+
+    def _go(self):
+        """
+Triggers engine to move if engine has first move."""
+
+        if self.board.turn == self.engine_color:
+            yield from self.go(move=None)
+        else:
+            yield Payload.text("You are on move now.\nType your move")
 
     def _new(self):
         """

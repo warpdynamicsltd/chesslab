@@ -8,6 +8,7 @@ if not os.path.isdir(chesslab_home):
     os.mkdir(chesslab_home)
 
 shutil.copy(os.path.join('data', 'lichess_db_puzzle.csv.zst'), os.path.join(chesslab_home, 'lichess_db_puzzle.csv.zst'))
+shutil.copy(os.path.join('data', 'book', 'book.bin'), os.path.join(chesslab_home, 'book.bin'))
 
 setup(
     name='chesslab',

@@ -70,6 +70,7 @@ class MainApp:
         'board_node',
         'limit',
         'human_moved',
+        'book',
         'apps'
     ]
 
@@ -298,7 +299,7 @@ Take the last move back."""
         """
 Set the board in an initial position of game of chess."""
         self.board.reset()
-        self.fen = chess.STARTING_BOARD_FEN
+        self.fen = chess.STARTING_FEN
         yield self.payload()
 
     def _again(self):
@@ -351,6 +352,9 @@ e.g. lines 5"""
                 value = 1000 * float(str(value[:-1]))
             elif value[-1] == 'm':
                 value = 1000000 * float(str(value[:-1]))
+
+        if arg_name == 'time':
+            value = float(value)
 
         return Limit(**{arg_name: value})
 
