@@ -8,7 +8,8 @@ class Puzzle:
         self.title=title
         uci_moves = uci_moves_string.split()
         self.moves = [Move.from_uci(move) for move in uci_moves]
-        self.fen = fen
+
+        self.db_fen = fen
         self.board = Board(fen)
         self.first_move = self.moves[0]
 
@@ -17,6 +18,7 @@ class Puzzle:
         self.flipped = flipped
 
         self.board.push(self.first_move)
+        self.fen = self.board.fen()
 
     def get_turn_name(self):
         return 'white' if self.board.turn else 'black'
@@ -26,7 +28,7 @@ class Puzzle:
 
     def get_first_move_str(self):
         game = chess.pgn.Game()
-        game.setup(self.fen)
+        game.setup(self.db_fen)
         game.add_line(self.moves[:1])
 
         exporter = chess.pgn.StringExporter(headers=False, variations=True, comments=False)
@@ -38,7 +40,7 @@ class Puzzle:
 
     def moves_to_san(self):
         moves_san = []
-        board = Board(self.fen)
+        board = Board(self.db_fen)
         for move in self.moves:
             moves_san.append(board.san(move))
             board.push(move)
@@ -47,7 +49,7 @@ class Puzzle:
 
     def solution(self):
         game = chess.pgn.Game()
-        game.setup(self.fen)
+        game.setup(self.db_fen)
         game.add_line(self.moves)
 
         exporter = chess.pgn.StringExporter(headers=False, variations=True, comments=False)

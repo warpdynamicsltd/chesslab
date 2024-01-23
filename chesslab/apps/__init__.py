@@ -113,7 +113,6 @@ class MainApp:
         self.puzzle = None
         self.apps = None
         self.refresh = True
-        self.limit = None
         self.colors = {
             'square dark': "#858383",
             'square light': "#d9d7d7"

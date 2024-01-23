@@ -9,6 +9,7 @@ from chesslab.apps.poslab import PosLab
 
 from chesslab.puzzle import Puzzle
 from chesslab.puzzle_provider import PuzzleProvider
+from chess import Board
 
 
 class TacticsLab(PosLab):
@@ -59,7 +60,8 @@ all commands available:
 
         self.flipped = self.puzzle.flipped
         self.fen = self.puzzle.fen
-        self.board = self.puzzle.board
+        # print(self.fen)
+        self.board = Board(self.fen)
 
     def create_puzzle_provider(self):
         con = sqlite3.connect(self.puzzles_db_path)
@@ -101,7 +103,7 @@ Next randomly chosen puzzle from predefined set.
         self.next_puzzle()
         self.flipped = self.puzzle.flipped
         yield from self._info()
-        yield from PosLab._fen(self, self.puzzle.board.fen())
+        yield from PosLab._fen(self, self.puzzle.fen)
 
     def _solve(self):
         """
