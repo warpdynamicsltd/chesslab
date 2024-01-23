@@ -23,7 +23,7 @@ you need the following steps:
       This will enable extension to use in this local repository
    3. Next `git pull` should download large files.
    
-4. Go into `chesslab` directory (e.g. `cd chesslab`)
+4. Go into the root directory of this repository, i.e. `chesslab` directory (e.g. `cd chesslab`)
 5. Install required dependencies by
 
     ```pip -r requrements.txt```
@@ -37,7 +37,10 @@ you need the following steps:
     If you want to install it for development, use:
 
     ```pip install -e .```
-7. Now, just type `chesslab` in your terminal and gui should start. You should see something like this:
+
+   Installation can take up to a few minutes because puzzles database is being created during installation. 
+7. Now, just type `chesslab` in your terminal and gui should start.
+You should see something like this:
 
    ![Alt Chesslab Screen](img/chesslab.png)
 8. Type `help` in console to read documentation

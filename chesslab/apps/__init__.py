@@ -53,6 +53,7 @@ class MainApp:
     program_data_path = os.path.join(os.path.expanduser('~'), '.chesslab')
     snapshot_dir = os.path.join(program_data_path, 'snapshots')
     pkl_file_path = os.path.join(program_data_path, 'chesslab.pkl')
+    puzzles_db_path = os.path.join(program_data_path, 'puzzles_db')
 
     attrs_to_copy = [
         'board',
@@ -63,9 +64,7 @@ class MainApp:
         'fen',
         'engine_path',
         'lines',
-        'df',
         'puzzle',
-        'pp',
         'probs',
         'ratings',
         'engine_color',
@@ -76,6 +75,12 @@ class MainApp:
         'book',
         'apps'
     ]
+
+    def __getstate__(self):
+        state = self.__dict__
+        if 'pp' in state:
+            del state['pp']
+        return state
 
     @classmethod
     def app(cls):
@@ -105,7 +110,6 @@ class MainApp:
         self.fen = chess.STARTING_BOARD_FEN
         self.engine_path = None
         self.lines = 5
-        self.df = None
         self.puzzle = None
         self.apps = None
         self.refresh = True
@@ -150,10 +154,19 @@ shows stored FEN not FEN of current position to get current FEN type: current fe
             pickle.dump(self, f)
 
     def _save(self, name: str):
+        """
+Save snapshot of a current application.
+
+save <snapshot_name: str>
+
+e.g. save snapshot1"""
         self.save_snapshot(name)
         yield Payload.text("saved")
 
     def _list(self):
+        """
+List all snapshots which you can load using load command.
+        """
         for path in glob.glob(os.path.join(self.snapshot_dir, "*.pkl")):
             yield Payload.text(Path(path).name[:-4])
 
@@ -162,6 +175,16 @@ shows stored FEN not FEN of current position to get current FEN type: current fe
             with open(self.pkl_file_path, "rb") as f:
                 obj = pickle.load(f)
                 self.__dict__ = obj.__dict__
+
+    def _load(self, value: str):
+        """
+Load snapshot of an application.
+
+load  <snapshot_name: str>
+
+e.g. load snapshot1"""
+        # load command is overwrote globally. This one is here just for docs
+        pass
 
     def start(self):
         return self.payload(f"Chesslab\n{MainApp.copyright_str}")
@@ -290,7 +313,7 @@ echo <arg>"""
 
     def _sleep(self, value: float):
         """
-Sleep for time a given as an argument in seconds.
+Sleep for time given as an argument in seconds.
 
 sleep <time: float>"""
         time.sleep(value)

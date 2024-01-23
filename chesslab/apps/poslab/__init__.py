@@ -139,7 +139,9 @@ When you play again, it deviates from the previous variations
 to test your play.
 Human player always has first move regardless of color.
 
-read about following commands: again, decide"""
+read about following commands: again, decide, bookmark
+
+all commands available:"""
 
     cmd = "poslab"
 

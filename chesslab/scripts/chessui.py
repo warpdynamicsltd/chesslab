@@ -17,6 +17,7 @@ from queue import Empty
 from chesslab.apps import MainApp, Payload
 from chesslab.apps.poslab import PosLab
 from chesslab.apps.tactics import TacticsLab
+from chesslab.scripts import init
 
 def convert_svg_to_png(svg_string):
     output = io.BytesIO()
@@ -96,6 +97,7 @@ def processor(in_queue, out_queue):
 
 # Create the main window
 def main():
+    init()
     in_queue = Queue()
     out_queue = Queue()
     p = Process(target=processor, args=(in_queue, out_queue))
