@@ -4,7 +4,8 @@ from chess import Board, Move, Color
 
 
 class Puzzle:
-    def __init__(self, fen, uci_moves_string, title=str(), flipped=False):
+    def __init__(self, puzzle_id, fen, uci_moves_string, title=str(), flipped=False):
+        self.puzzle_id = puzzle_id
         self.title=title
         uci_moves = uci_moves_string.split()
         self.moves = [Move.from_uci(move) for move in uci_moves]

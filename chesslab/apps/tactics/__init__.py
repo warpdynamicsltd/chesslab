@@ -92,6 +92,7 @@ all commands available:
         """
 Show information needed to solve a puzzle
 """
+        yield Payload.text(f"PuzzleId {self.puzzle.puzzle_id}")
         yield Payload.text(self.puzzle.get_first_move_str())
         yield Payload.text(f"{self.puzzle.get_turn_name()} to move")
         yield Payload.text(f"pawns direction {self.puzzle.direction_str()}")
@@ -102,6 +103,13 @@ Next randomly chosen puzzle from predefined set.
 """
         self.next_puzzle()
         self.flipped = self.puzzle.flipped
+        yield from self._info()
+        yield from PosLab._fen(self, self.puzzle.fen)
+
+    def _puzzle(self, value: str):
+        con = sqlite3.connect(self.puzzles_db_path)
+        self.puzzle = self.pp.get_puzzle(con, self.table_name, value)
+        con.close()
         yield from self._info()
         yield from PosLab._fen(self, self.puzzle.fen)
 

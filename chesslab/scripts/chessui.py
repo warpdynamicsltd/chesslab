@@ -128,6 +128,8 @@ def main():
     entry = tk.Entry(terminal_frame, font=custom_font)
     entry.pack(fill=tk.X)
     entry.bind("<Return>", lambda event: execute_command())
+    entry.bind("<Up>", lambda event: on_arrow_press(1))
+    entry.bind("<Down>", lambda event: on_arrow_press(-1))
 
     # Create the image label on the right
     image_label = tk.Label(root)
@@ -145,10 +147,34 @@ def main():
 
     text_area.insert(tk.INSERT, f"{payload.text}\n")
 
+    stack = []
+
+    index = -1
+
     def execute_command():
         command = entry.get()
+        stack.append(command)
         in_queue.put(command)
         entry.config(state=tk.DISABLED)
+
+    def on_arrow_press(direction):
+        nonlocal index
+        content = entry.get()
+        if content == "":
+            index = 0
+        else:
+            index += direction
+
+        if 0 <= index < len(stack):
+            content = stack[len(stack) - 1 - index]
+
+        else:
+            content = ""
+
+        entry.delete(0, tk.END)
+        entry.insert(0, content)
+
+        return 'break'
 
     time_step = 10
 
@@ -160,6 +186,7 @@ def main():
 
         if payload is not None:
             if payload.text is not None:
+                text_area.mark_set(tk.INSERT, tk.END)
                 text_area.insert(tk.INSERT, f"{payload.text}\n")
                 text_area.see(tk.END)
             if payload.img_data is not None:
