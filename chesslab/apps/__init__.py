@@ -223,13 +223,13 @@ e.g. load snapshot1"""
             return self.board.outcome()
 
         if self.board.is_repetition():
-            return chess.Outcome(chess.Termination.THREEFOLD_REPETITION)
+            return chess.Outcome(chess.Termination.THREEFOLD_REPETITION, winner=None)
 
         if self.board.is_fifty_moves():
-            return chess.Outcome(chess.Termination.FIFTY_MOVES)
+            return chess.Outcome(chess.Termination.FIFTY_MOVES, winner=None)
 
         if self.board.is_stalemate():
-            return chess.Outcome(chess.Termination.STALEMATE)
+            return chess.Outcome(chess.Termination.STALEMATE, winner=None)
 
         return None
 
@@ -416,6 +416,12 @@ e.g. lines 5"""
 
         if arg_name == 'time':
             value = float(value)
+
+        if arg_name == 'depth':
+            value = int(value)
+
+        if arg_name == 'mate':
+            value = int(value)
 
         return Limit(**{arg_name: value})
 
