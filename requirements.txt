@@ -1,4 +1,5 @@
 jupyter
+numpy
 pandas
 chess
 cairosvg

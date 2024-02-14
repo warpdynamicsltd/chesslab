@@ -236,19 +236,6 @@ all commands available:"""
         yield self.payload(self.get_current_outcome_str())
         yield from self.bookmark_info_string()
 
-    def book_move(self):
-        if not self.book:
-            return None
-
-        try:
-            with chess.polyglot.open_reader(os.path.join(self.program_data_path, 'book.bin')) as reader:
-                board = Board(self.board.fen())
-                # for entry in reader.find_all(board):
-                #     print(entry.move, entry.weight, entry.learn)
-                entry = reader.choice(board, random=random.Random())
-                return entry.move
-        except IndexError as e:
-            return None
 
     def choose_engine_move(self):
         if self.current_node.turn != self.engine_color:
@@ -333,14 +320,6 @@ restart black - engine plays as black
             self.initialise()
         else:
             self.initialise(engine_color == 'white')
-
-    def _book(self, value: str):
-        """
-Turning on and off opening book.
-
-book on|off
-"""
-        self.book = (value == 'on')
 
     def _onmove(self):
         """

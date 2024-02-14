@@ -3206,3 +3206,100 @@ Rc2 21. Ne1 Nxe1 22. Rxe1 b6 23. a4 Rc3 24. Nb5 Rxb3 25. Nxa7 Ra3 26. Nc8 Nd5
 Kg2 Nc3 34. Rxb6 Nxe4 35. Nd6 Nxd6 36. Rxd6 Ke7 37. Rb6 Rd3 38. Rb7+ Kf8 39.
 Rb8+ Ke7 40. Rb7+ Kf8 41. Rb8+ Ke7 42. Rb7+ 1/2-1/2
 
+[Event "Computer chess game"]
+[Site "Computer"]
+[Date "2024.01.29"]
+[Round "?"]
+[White "Stockfish minimal nodes"]
+[Black "Player"]
+[Result "1-0"]
+[Time "21:27:00"]
+[Termination "program"]
+[BlackType "normal"]
+[WhiteScore "-22.21"]
+[BlackScore "-36.78"]
+
+1. e4 e6 2. Nc3 d5 3. Nf3 Nf6 4. exd5 exd5 5. d4 Be7 6. Bd3 O-O 7. O-O Re8 8.
+Re1 c6 9. h3 Bb4 10. Rxe8+ Qxe8 11. Ne2 Bd6 12. Bf4 Qd7 13. Ne5 Qc7 14. c4 Nbd7
+15. c5 Bxe5 16. dxe5 Nxe5 17. Nd4 Qe7 18. Qe2 Ng6 19. Qxe7 Nxe7 20. Re1 Ng6 21.
+Bxg6 fxg6 22. Re7 Ne4 23. Be5 Nf6 24. f3 Kf8 25. Rc7 Ne8 26. Bd6+ Nxd6 27. cxd6
+Ke8 28. Rxg7 1-0
+
+[Event "Computer chess game"]
+[Site "Computer"]
+[Date "2024.02.03"]
+[Round "?"]
+[White "Player"]
+[Black "Stockfish minimal nodes"]
+[Result "1-0"]
+[Time "16:35:00"]
+[Termination "program"]
+[BlackType "normal"]
+[WhiteScore "-8.38"]
+[BlackScore "-13.52"]
+
+1. d4 d5 2. Bf4 c6 3. c3 Nf6 4. e3 h6 5. Bd3 e6 6. Nf3 Bd6 7. Bg3 Bxg3 8. fxg3
+O-O 9. O-O Nbd7 10. Nbd2 Ng4 11. Re1 e5 12. dxe5 Ndxe5 13. Nxe5 Nxe5 14. Qc2
+Nxd3 15. Qxd3 Re8 16. e4 Qb6+ 17. Kh1 dxe4 18. Nxe4 Bf5 19. Nf6+ gxf6 20. Qxf5
+Qxb2 21. Qxf6 Re6 22. Qf3 Rae8 23. Rf1 R8e7 24. h4 Qe2 25. Qxe2 Rxe2 26. Kh2
+Kf8 27. a4 R2e3 28. Rfc1 a5 29. c4 R7e4 30. Rab1 Rg4 31. Rxb7 Rexg3 32. Rc2 Ra3
+33. g3 Rgxg3 34. Rf2 Rh3+ 35. Kg2 Rhg3+ 36. Kh1 Ra1+ 37. Kh2 Rg7 38. Rc7 Kg8
+39. Rxc6 Rg4 40. Rxh6 Rxc4 41. Rhf6 Rxh4+ 42. Kg2 Rg4+ 43. Kh2 Rh4+ 44. Kg2
+Rg4+ 45. Kh2 Rgg1 46. R6f5 Rh1+ 47. Kg2 Rag1+ 48. Kf3 Rh3+ 49. Ke2 Ra1 50. Rxa5
+Ra2+ 51. Kf1 Rh1+ 52. Kg2 Rh2+ 53. Kxh2 Rxf2+ 54. Kg3 Rd2 55. Ra8+ Kg7 56. a5
+Rd3+ 57. Kf4 Rd4+ 58. Ke5 Rd1 59. a6 f6+ 60. Kf5 Rf1+ 61. Ke4 f5+ 62. Ke5 f4
+63. a7 Re1+ 64. Kxf4 Rf1+ 65. Ke4 Re1+ 66. Kd3 Ra1 67. Kc3 Ra3+ 68. Kb2 Ra6 69.
+Kb3 Rb6+ 70. Kc4 Rc6+ 71. Kb5 Rc1 72. Rg8+ Kf7 73. a8=Q Kf6 74. Qf3+ Ke7 75.
+Qe3+ Kf7 76. Qe8+ Kf6 77. Rg6+ Kf5 78. Qe6+ Kf4 79. Rg4+ Kf3 80. Qe4+ Kf2 81.
+Rg2+ Kf1 82. Qe2# 1-0
+
+[Event "Computer chess game"]
+[Site "Computer"]
+[Date "2024.02.03"]
+[Round "?"]
+[White "Player"]
+[Black "Stockfish minimal nodes"]
+[Result "1-0"]
+[Time "16:35:00"]
+[Termination "program"]
+[BlackType "normal"]
+[WhiteScore "-8.41"]
+[BlackScore "-13.68"]
+
+1. d4 d5 2. Bf4 c6 3. c3 Nf6 4. e3 h6 5. Bd3 e6 6. Nf3 Bd6 7. Bg3 Bxg3 8. fxg3
+O-O 9. O-O Nbd7 10. Nbd2 Ng4 11. Re1 e5 12. dxe5 Ndxe5 13. Nxe5 Nxe5 14. Qc2
+Nxd3 15. Qxd3 Re8 16. e4 Qb6+ 17. Kh1 dxe4 18. Nxe4 Bf5 19. Nf6+ gxf6 20. Qxf5
+Qxb2 21. Qxf6 Re6 22. Qf3 Rae8 23. Rf1 R8e7 24. h4 Qe2 25. Qxe2 Rxe2 26. Kh2
+Kf8 27. a4 R2e3 28. Rfc1 a5 29. c4 R7e4 30. Rab1 Rg4 31. Rxb7 Rexg3 32. Rc2 Ra3
+33. g3 Rgxg3 34. Rf2 Rh3+ 35. Kg2 Rhg3+ 36. Kh1 Ra1+ 37. Kh2 Rg7 38. Rc7 Kg8
+39. Rxc6 Rg4 40. Rxh6 Rxc4 41. Rhf6 Rxh4+ 42. Kg2 Rg4+ 43. Kh2 Rh4+ 44. Kg2
+Rg4+ 45. Kh2 Rgg1 46. R6f5 Rh1+ 47. Kg2 Rag1+ 48. Kf3 Rh3+ 49. Ke2 Ra1 50. Rxa5
+Ra2+ 51. Kf1 Rh1+ 52. Kg2 Rh2+ 53. Kxh2 Rxf2+ 54. Kg3 Rd2 55. Ra8+ Kg7 56. a5
+Rd3+ 57. Kf4 Rd4+ 58. Ke5 Rd1 59. a6 f6+ 60. Kf5 Rf1+ 61. Ke4 f5+ 62. Ke5 f4
+63. a7 Re1+ 64. Kxf4 Rf1+ 65. Ke4 Re1+ 66. Kd3 Ra1 67. Kc3 Ra3+ 68. Kb2 Ra6 69.
+Kb3 Rb6+ 70. Kc4 Rc6+ 71. Kb5 Rc1 72. Rg8+ Kf7 73. a8=Q Kf6 74. Qf3+ Ke7 75.
+Qe3+ Kf7 76. Qe8+ Kf6 77. Rg6+ Kf5 78. Qe6+ Kf4 79. Rg4+ Kf3 80. Qe4+ Kf2 81.
+Rg2+ Kf1 82. Qe2# 1-0
+
+[Event "Chesslab Rated Game"]
+[Site "Chesslab"]
+[Date "2024.02.14"]
+[Round "?"]
+[White "Chesslab Engine"]
+[Black "Player"]
+[Result "0-1"]
+[WhiteElo "1292"]
+[BlackElo "1192"]
+[WhiteScore "-34.07"]
+[BlackScore "-21.15"]
+
+1. d4 e6 2. g3 d5 3. Bg2 Nf6 4. Nf3 c5 5. O-O b6 6. c4 Bb7 7. cxd5 Bxd5 8. Nc3
+Bb7 9. dxc5 Qxd1 10. Rxd1 Bxc5 11. Bf4 a6 12. Rac1 O-O 13. Na4 Nbd7 14. Nxc5
+Nxc5 15. b4 Ncd7 16. Rc7 Rab8 17. Rdxd7 Nxd7 18. Rxd7 Rfd8 19. Rxd8+ Rxd8 20.
+Nd2 Bxg2 21. Kxg2 Rc8 22. Kf3 Rc2 23. a4 Rb2 24. h3 Rxb4 25. Be3 Rxa4 26. Bxb6
+f5 27. h4 Kf7 28. Ke3 Ke7 29. h5 Kd7 30. Bc5 g6 31. hxg6 hxg6 32. Nf3 Kc6 33.
+Bd4 Kd5 34. Bg7 Rb4 35. Bf8 Rb8 36. Be7 a5 37. Kd3 a4 38. Nd2 Ra8 39. Ba3 e5
+40. Nc4 e4+ 41. Kc3 Rc8 42. Kb4 Rxc4+ 43. Ka5 Rc8 44. e3 Kc4 45. Kb6 Kb3 46. g4
+Kxa3 47. gxf5 gxf5 48. Kb5 Kb3 49. Kb6 a3 50. Kb7 Rc1 51. f3 a2 52. f4 a1=Q 53.
+Kb6 Qa4 54. Kb7 Qb5+ 55. Ka8 Ra1# 0-1
+

@@ -17,6 +17,7 @@ from queue import Empty
 from chesslab.apps import MainApp, Payload
 from chesslab.apps.poslab import PosLab
 from chesslab.apps.tactics import TacticsLab
+from chesslab.apps.chessworld import ChessWorld
 from chesslab.scripts import init
 
 def convert_svg_to_png(svg_string):

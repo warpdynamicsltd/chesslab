@@ -1,4 +1,5 @@
 import time
+import random
 import glob
 import pickle
 import io
@@ -67,12 +68,18 @@ class MainApp:
         'puzzle',
         'probs',
         'ratings',
+        'rating',
+        'my_rating',
+        'rating_old',
+        'my_rating_old',
         'engine_color',
         'current_node',
         'board_node',
         'limit',
         'human_moved',
+        'resigned',
         'book',
+        'my',
         'apps'
     ]
 
@@ -113,6 +120,14 @@ class MainApp:
         self.puzzle = None
         self.apps = None
         self.refresh = True
+        self.book = False
+        self.limit = None
+        self.rating = None
+        self.my = None
+        self.my_rating = None
+        self.my_rating_old = None
+        self.rating_old = None
+        self.resigned = False
         self.colors = {
             'square dark': "#858383",
             'square light': "#d9d7d7"
@@ -151,6 +166,9 @@ shows stored FEN not FEN of current position to get current FEN type: current fe
 
         with open(os.path.join(self.snapshot_dir, name + '.pkl'), "wb") as f:
             pickle.dump(self, f)
+
+    def _app(self):
+        yield self.start()
 
     def _save(self, name: str):
         """
@@ -215,6 +233,8 @@ e.g. load snapshot1"""
             yield Payload.text("FIVEFOLD REPETITION")
         if self.board.is_fifty_moves():
             yield Payload.text("FIFTY MOVES")
+        if self.board.is_insufficient_material():
+            yield Payload.text("INSUFFICIENT MATERIAL")
 
         yield self.payload()
 
@@ -230,6 +250,9 @@ e.g. load snapshot1"""
 
         if self.board.is_stalemate():
             return chess.Outcome(chess.Termination.STALEMATE, winner=None)
+
+        if self.board.is_insufficient_material():
+            return chess.Outcome(chess.Termination.INSUFFICIENT_MATERIAL, winner=None)
 
         return None
 
@@ -302,6 +325,20 @@ e.g. load snapshot1"""
             yield from res
 
         yield Payload.terminal()
+
+    def book_move(self):
+        if not self.book:
+            return None
+
+        try:
+            with chess.polyglot.open_reader(os.path.join(self.program_data_path, 'book.bin')) as reader:
+                board = Board(self.board.fen())
+                # for entry in reader.find_all(board):
+                #     print(entry.move, entry.weight, entry.learn)
+                entry = reader.choice(board, random=random.Random())
+                return entry.move
+        except IndexError as e:
+            return None
 
     def _echo(self, value: str):
         """
@@ -474,7 +511,7 @@ Print sequence of moves in console."""
         game = chess.pgn.Game()
         game.setup(self.fen)
         game.add_line(self.board.move_stack)
-        outcome = self.board.outcome(claim_draw=True)
+        outcome = self.fixed_outcome()
         if outcome is not None:
             game.headers['Result'] = outcome.result()
 
@@ -513,6 +550,14 @@ current fen
         if key == 'fen':
             yield Payload.text(self.board.fen())
             return
+
+    def _book(self, value: str):
+        """
+    Turning on and off opening book.
+
+    book on|off
+    """
+        self.book = (value == 'on')
 
     def _help(self, value: str = None):
         """
