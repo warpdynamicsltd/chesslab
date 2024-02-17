@@ -80,6 +80,7 @@ class MainApp:
         'resigned',
         'book',
         'my',
+        'chess960',
         'apps'
     ]
 
@@ -128,6 +129,8 @@ class MainApp:
         self.my_rating_old = None
         self.rating_old = None
         self.resigned = False
+        self.chess960 = False
+        self.engine_color = True
         self.colors = {
             'square dark': "#858383",
             'square light': "#d9d7d7"
@@ -393,11 +396,28 @@ Take the last move back."""
         self.board.pop()
         yield self.payload()
 
+    def _chess960(self, value: str):
+        """
+Turn on and off Fisher random chess variation, known also as Chess960
+
+chess960 on|off
+"""
+        if value == 'on':
+            self.chess960 = True
+        else:
+            self.chess960 = False
+
     def _new(self):
         """
 Set the board in an initial position of game of chess."""
         self.board.reset()
-        self.fen = chess.STARTING_FEN
+
+        if self.chess960:
+            self.board = Board(chess960=True)
+            self.board.set_chess960_pos(random.randint(0, 959))
+            self.fen = self.board.fen()
+        else:
+            self.fen = chess.STARTING_FEN
         yield self.payload()
 
     def _again(self):

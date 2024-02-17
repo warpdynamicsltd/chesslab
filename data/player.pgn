@@ -3303,3 +3303,27 @@ Bd4 Kd5 34. Bg7 Rb4 35. Bf8 Rb8 36. Be7 a5 37. Kd3 a4 38. Nd2 Ra8 39. Ba3 e5
 Kxa3 47. gxf5 gxf5 48. Kb5 Kb3 49. Kb6 a3 50. Kb7 Rc1 51. f3 a2 52. f4 a1=Q 53.
 Kb6 Qa4 54. Kb7 Qb5+ 55. Ka8 Ra1# 0-1
 
+[Event "Chesslab Rated Game"]
+[Site "Chesslab"]
+[Date "2024.02.15"]
+[Round "?"]
+[White "Player"]
+[Black "Chesslab Engine"]
+[Result "1-0"]
+[WhiteElo "1202"]
+[BlackElo "1318"]
+[WhiteScore "-22.13"]
+[BlackScore "-26.82"]
+
+1. d4 e6 2. Bf4 Nf6 3. Nf3 d5 4. e3 Be7 5. Nbd2 c5 6. c3 O-O 7. Bd3 Nbd7 8. O-O
+Qb6 9. Qb3 c4 10. Qxb6 axb6 11. Bc2 b5 12. b4 Ra3 13. Nb1 Ra8 14. Nbd2 Ra3 15.
+Nb1 Ra8 16. Nbd2 Nh5 17. Bc7 Ra3 18. Ba5 Rxc3 19. Rfc1 b6 20. Bxb6 Nxb6 21. Nb1
+Rxc2 22. Rxc2 Bxb4 23. Rb2 Bd6 24. Rxb5 Na4 25. Nbd2 Nc3 26. Rb2 Nf6 27. Ne5
+Ba6 28. Rb6 Ne2+ 29. Kf1 Bxe5 30. dxe5 Nd7 31. Rxa6 Nc5 32. Rc6 Nd3 33. Kxe2
+Nxe5 34. Rb6 Nd7 35. Rb5 Ra8 36. a4 c3 37. Nf3 c2 38. Kd2 Rc8 39. a5 Nf6 40.
+Nd4 Ne4+ 41. Kc1 Nd6 42. Rb4 Ne4 43. Nxc2 Nxf2 44. Kd2 e5 45. a6 h6 46. a7 d4
+47. a8=Q dxe3+ 48. Nxe3 Rxa8 49. Rxa8+ Kh7 50. Ke2 Nh1 51. Rb1 Ng3+ 52. hxg3
+Kg6 53. Rb6+ Kg5 54. Ra5 f6 55. Rb4 Kg6 56. Ra7 h5 57. Rbb7 Kh6 58. Rxg7 h4 59.
+Rh7+ Kg5 60. Kf3 e4+ 61. Kxe4 f5+ 62. Kf3 hxg3 63. Raf7 f4 64. Rhg7+ Kh4 65.
+Kxf4 Kh5 66. Ng4 Kh4 67. Rh7# 1-0
+
