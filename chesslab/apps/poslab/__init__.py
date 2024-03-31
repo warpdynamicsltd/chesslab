@@ -162,7 +162,7 @@ all commands available:"""
         self.book = True
 
     def start(self):
-        return self.payload(f"PosLab\n{MainApp.copyright_str}")
+        yield self.payload(f"PosLab\n{MainApp.copyright_str}")
 
     def initialise(self, engine_color=None):
         if engine_color is None:
@@ -296,13 +296,15 @@ Your previous variations are remembered and used to choose different variations 
         self.human_moved = False
         yield self.payload()
 
-    def _fen(self, value: str):
+    def _fen(self, value: str = None):
         """
 Set borad position in Forsyth–Edwards Notation (FEN).
 
 fen <arg: str>
 
 e.g. fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"""
+        if value is None:
+            raise Exception("missing argument")
 
         yield from MainApp._fen(self, value)
         self.initialise()

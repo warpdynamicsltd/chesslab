@@ -34,17 +34,16 @@ an application to simulate games, tournaments and players with specific ratings
             self.rating_old = self.rating
 
         if not hasattr(self, 'my_rating_old') or self.my_rating_old is None:
-            self.my_rating = self.my_rating_old
-
-        if not hasattr(self, 'limit') or self.limit is None:
-            self.limit = Limit(nodes=self.rating2nodes(self.rating))
+            self.my_rating_old = self.my_rating
 
         if not hasattr(self, 'my') or self.my is None:
             self.my = 'white'
 
         self.resigned = False
-        self.my_rating_old = self.my_rating
-        self.rating_old = self.rating_old
+        self.board = chess.Board()
+        self.fen = self.board.fen()
+        self.limit = Limit(nodes=self.rating2nodes(self.rating))
+        self.can_exist = False
 
     def fixed_outcome(self):
         outcome = MainApp.fixed_outcome(self)
@@ -85,7 +84,8 @@ an application to simulate games, tournaments and players with specific ratings
         self.board.push(move)
 
     def start(self):
-        return self.payload(f"ChessWorld\n{MainApp.copyright_str}")
+        yield self.payload(f"ChessWorld\n{MainApp.copyright_str}")
+        yield from self._new()
 
     def _rating(self, value: int):
         """
@@ -94,6 +94,13 @@ Set opponent rating
 e.g. rating 1600
 """
         self.rating = value
+
+    def _myrating(self, value: int):
+        """
+Set my rating
+
+e.g. myrating 1600 """
+        self.my_rating = value
 
     def _my(self, value: str):
         """
@@ -174,11 +181,13 @@ Print sequence of moves in console."""
         """
 Start new serious game """
         outcome = self.fixed_outcome()
+        self.can_exit = False
         if outcome is None:
             yield self.payload("game is not finished")
             return
 
         yield from MainApp._new(self)
+
         self.my_rating_old = self.my_rating
         self.resigned = False
         self.choose_engine_color()
@@ -199,6 +208,9 @@ Start new serious game """
         yield self.payload(f"engine plays {color}")
 
     def game_info(self):
+        outcome = self.fixed_outcome()
+        if outcome is not None:
+            self.can_exist = True
         yield from self.send_pos_status()
         if self.resigned:
             yield self.payload("RESIGNED")
@@ -213,9 +225,12 @@ Display game outcome
 """
         outcome = self.fixed_outcome()
         if outcome is None:
-            yield self.payload("game is not finished")
+            yield self.payload("Game is not finished!")
         else:
             yield from self.game_info()
+
+    def _back(self):
+        yield self.payload("Can't take back during serious game.")
 
     def go(self, move):
         if move is not None:

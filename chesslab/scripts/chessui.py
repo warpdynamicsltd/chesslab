@@ -47,7 +47,9 @@ def processor(in_queue, out_queue):
     # make sure pickle object is compatible with code version
     app = app.create_from(app)
 
-    out_queue.put(app.start())
+    # out_queue.put(app.start())
+    for payload in app.start():
+        out_queue.put(payload)
 
     while True:
         command = in_queue.get()
@@ -66,21 +68,31 @@ def processor(in_queue, out_queue):
         if cmd == 'load':
             app.save_snapshot('autosave')
             app = app.load_snapshot(value)
-            out_queue.put(app.start())
+            # out_queue.put(app.start())
+            for payload in app.start():
+                out_queue.put(payload)
             out_queue.put(Payload.terminal())
             continue
 
         if cmd in apps:
             app.save_snapshot('autosave')
             app = apps[cmd](app)
-            out_queue.put(app.start())
+            # out_queue.put(app.start())
+            for payload in app.start():
+                out_queue.put(payload)
             out_queue.put(Payload.terminal())
             continue
 
         if cmd == 'exit':
+            if not app.can_exist:
+                out_queue.put(app.payload("can't exit now"))
+                out_queue.put(Payload.terminal())
+                continue
             app.save_snapshot('autosave')
             app = app.exit()
-            out_queue.put(app.start())
+            # out_queue.put(app.start())
+            for payload in app.start():
+                out_queue.put(payload)
             out_queue.put(Payload.terminal())
             continue
 

@@ -110,6 +110,7 @@ class MainApp:
         return app
 
     def __init__(self, size=600):
+        self.can_exist = True
         self.board = Board()
         self.size = size
         self.debug = False
@@ -207,7 +208,7 @@ e.g. load snapshot1"""
         pass
 
     def start(self):
-        return self.payload(f"Chesslab\n{MainApp.copyright_str}")
+        yield self.payload(f"Chesslab\n{MainApp.copyright_str}")
 
     def exit(self):
         return MainApp.create_from(self)
@@ -441,6 +442,8 @@ Set borad position in Forsyth–Edwards Notation (FEN).
 fen <arg: str>
 
 e.g. fen "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" """
+        if value is None:
+            raise Exception("missing argument")
         self.fen = value
         self.set_fen()
         yield self.payload()

@@ -62,6 +62,7 @@ all commands available:
         self.fen = self.puzzle.fen
         # print(self.fen)
         self.board = Board(self.fen)
+        self.engine_color = not self.board.turn
 
     def create_puzzle_provider(self):
         con = sqlite3.connect(self.puzzles_db_path)
@@ -78,7 +79,8 @@ all commands available:
         con.close()
 
     def start(self):
-        return self.payload(f"TacticsLab\n{MainApp.copyright_str}")
+        yield self.payload(f"TacticsLab\n{MainApp.copyright_str}")
+        yield from self._info()
 
     def _ratings(self, *args):
         self.ratings = list(map(int, args))
