@@ -10,6 +10,7 @@ from chesslab.apps.poslab import PosLab
 from chesslab.puzzle import Puzzle
 from chesslab.puzzle_provider import PuzzleProvider
 from chess import Board
+from chess.engine import Limit
 
 
 class TacticsLab(PosLab):
@@ -57,6 +58,9 @@ all commands available:
         if not hasattr(self, 'puzzle') or self.puzzle is None:
             self.puzzle = None
             self.next_puzzle()
+
+        if not hasattr(self, 'limit') or self.limit is None:
+            self.limit = Limit(time=1)
 
         self.flipped = self.puzzle.flipped
         self.fen = self.puzzle.fen

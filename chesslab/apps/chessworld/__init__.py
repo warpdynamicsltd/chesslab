@@ -36,6 +36,9 @@ an application to simulate games, tournaments and players with specific ratings
         if not hasattr(self, 'my_rating_old') or self.my_rating_old is None:
             self.my_rating_old = self.my_rating
 
+        if not hasattr(self, 'limit') or self.limit is None:
+            self.limit = Limit(time=1)
+
         if not hasattr(self, 'my') or self.my is None:
             self.my = 'white'
 
