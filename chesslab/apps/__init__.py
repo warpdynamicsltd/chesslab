@@ -538,7 +538,7 @@ Print sequence of moves in console."""
         if outcome is not None:
             game.headers['Result'] = outcome.result()
 
-        exporter = chess.pgn.StringExporter(headers=False, variations=True, comments=False)
+        exporter = chess.pgn.StringExporter(headers=True, variations=True, comments=False)
         pgn_string = game.accept(exporter)
         yield Payload.text(pgn_string)
 
