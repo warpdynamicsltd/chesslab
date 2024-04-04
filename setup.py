@@ -39,6 +39,8 @@ setup(
     url='',
     license='Copyright (c) 2023 Warp Dynamics Limited. All rights reserved.',
     author='Michal Wojcik',
+    package_data={'chesslab': ['assets/img/icon.png']},
+    include_package_data=True,
     author_email='wojcik@warpdynamics.co.uk',
     description='',
     scripts=['chesslab/scripts/chessui.py'],

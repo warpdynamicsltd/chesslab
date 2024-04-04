@@ -1,5 +1,6 @@
 import time
 import io
+import os
 import sys
 import sys
 import traceback
@@ -19,6 +20,7 @@ from chesslab.apps.poslab import PosLab
 from chesslab.apps.tactics import TacticsLab
 from chesslab.apps.chessworld import ChessWorld
 from chesslab.scripts import init
+import chesslab.assets.img
 
 def convert_svg_to_png(svg_string):
     output = io.BytesIO()
@@ -129,6 +131,7 @@ def main():
 
     root = tk.Tk()
     root.title("Chesslab")
+    root.iconphoto(True, tk.PhotoImage(file=os.path.join(chesslab.assets.img.__path__[0], 'icon.png')))
     custom_font = font.Font(family="Courier New", size=10)
 
     # Create the terminal frame on the left
