@@ -22,14 +22,8 @@ from chesslab.apps.tactics import TacticsLab
 from chesslab.apps.chessworld import ChessWorld
 from chesslab.scripts import init
 from chesslab.ecb import ECB
+from chesslab.command import ChesslabCommand
 import chesslab.assets.img
-
-
-class ChesslabCommand:
-    def __init__(self, cmd, content):
-        self.cmd = cmd
-        self.content = content
-
 
 def convert_svg_to_png(svg_string):
     output = io.BytesIO()
@@ -107,7 +101,7 @@ def chesslab_logic_processor(in_queue, out_queue):
             continue
 
         try:
-            for output in app.execute(cmd, value):
+            for output in app.execute(cmd, value, mode=chesslab_command.cmd):
                 out_queue.put(output)
         except Exception as e:
             if app.debug:
@@ -120,7 +114,12 @@ def chesslab_logic_processor(in_queue, out_queue):
 
 def electronic_chessboard_communication(ec_in_queue, in_queue, out_queue):
     ecb = ECB(ec_in_queue, in_queue, out_queue)
-    asyncio.run(ecb.main())
+    loop = asyncio.get_event_loop()
+    #loop.run_until_complete(ecb.main())
+    loop.create_task(ecb.actions_loop())
+    loop.create_task(ecb.command_loop())
+    loop.run_forever()
+    loop.close()
     # while True:
     #     m = ec_in_queue.get()
     #     print(m)

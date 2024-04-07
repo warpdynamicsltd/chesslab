@@ -8,7 +8,7 @@ from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
 
 from chesslab.apps import Payload, EcbCommand
-import chesslab.scripts.chessui
+from chesslab.command import ChesslabCommand
 
 """ Constant used in the program"""
 # When the board is first connected it is necessary to send it a three byte initialisation code:
@@ -50,6 +50,9 @@ class Action:
         self.square = square
         self.color = color
 
+    def __repr__(self):
+        return f"{self.direction} {self.piece} {self.square} {self.color}"
+
 
 class ECB:
     def __init__(self, ec_in_queue, in_queue, out_queue):
@@ -62,14 +65,27 @@ class ECB:
         self.device = None
         self.prev_data = None
 
-        self.action_stack = []
-        self.castling = False
-        self.promoting = False
-        self.capturing = False
+        self.actions = asyncio.Queue()
+        self.led = bytearray([0x0A, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+
+        self.send_disabled = False
+
+    def available(self):
+        return self.client is not None and self.client.is_connected
+
+    async def light_led(self, square):
+        i = 7 - ord(square[0]) + ord('a')
+        j = 8 - int(square[1])
+        self.led[2 + j] |= (1 << i)
+        await self.client.write_gatt_char(WRITECHARACTERISTICS, self.led)
+
+    async def all_led_off(self):
+        self.led = bytearray([0x0A, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+        await self.client.write_gatt_char(WRITECHARACTERISTICS, self.led)
 
     async def discover(self):
         self.devices = {}
-        devices = await BleakScanner.discover()
+        devices = await BleakScanner.discover(timeout=5.0)
         if devices:
             for i, device in enumerate(devices):
                 key = str(i + 1)
@@ -80,108 +96,21 @@ class ECB:
             self.out_queue.put(Payload.text("no devices"))
 
     def send_move(self, uci_move):
-        print('MOVE', uci_move)
-        self.in_queue.put(chesslab.scripts.chessui.ChesslabCommand('term', uci_move))
+        # print('MOVE', uci_move)
+        if not self.send_disabled:
+            self.in_queue.put(ChesslabCommand('ecb', uci_move))
 
-    def clear_action_stack(self):
-        self.action_stack = []
-        self.castling = False
-        self.promoting = False
-        self.capturing = False
+    async def piece_up(self, piece, square, color):
+        action = Action('UP', piece, square, color)
+        # print(action)
+        await self.light_led(action.square)
+        await self.actions.put(action)
 
-    def interpret_action_stack(self):
-        if self.capturing and len(self.action_stack) == 3:
-            if self.action_stack[2].direction == 'DOWN':
-                if self.action_stack[2].color == self.action_stack[0].color:
-                    del self.action_stack[1]
-                elif self.action_stack[2].color == self.action_stack[1].color:
-                    del self.action_stack[0]
-                self.capturing = False
-
-        if self.castling and len(self.action_stack) == 3:
-            if self.action_stack[2].direction == 'UP' and self.action_stack[2].piece in {'R', 'r'}:
-                return
-            self.clear_action_stack()
-            return
-
-        if self.castling and len(self.action_stack) == 4:
-            if self.action_stack[3].direction == 'DOWN' and self.action_stack[3].piece in {'R', 'r'}:
-                move = self.action_stack[0].square + self.action_stack[1].square
-                self.send_move(move)
-                self.clear_action_stack()
-                return
-
-        if self.promoting and len(self.action_stack) == 2:
-            if self.action_stack[1].direction == 'DOWN':
-                piece = self.action_stack[1].piece.lower()
-                move = self.action_stack[0].square + self.action_stack[1].square + piece
-                self.send_move(move)
-            self.clear_action_stack()
-            return
-
-        if len(self.action_stack) == 1:
-            # white promotion
-            if self.action_stack[0].direction == 'UP' and self.action_stack[0].piece == 'P' and self.action_stack[0].square[1] == '7':
-                self.promoting = True
-                return
-
-            # black promotion
-            if self.action_stack[0].direction == 'UP' and self.action_stack[0].piece == 'p' and self.action_stack[0].square[1] == '2':
-                self.promoting = True
-                return
-
-            if self.action_stack[0].direction == 'DOWN':
-                self.clear_action_stack()
-                return
-
-            return
-
-        if len(self.action_stack) == 2:
-            first_color = self.action_stack[0].color
-
-            # white promotion
-            if self.action_stack[1].direction == 'UP' and self.action_stack[1].piece == 'P' and self.action_stack[1].square[1] == '7':
-                self.promoting = True
-
-            # black promotion
-            if self.action_stack[1].direction == 'UP' and self.action_stack[1].piece == 'p' and self.action_stack[1].square[1] == '2':
-                self.promoting = True
-
-            # eliminate capturing
-            if self.action_stack[0].direction == 'UP' and self.action_stack[1].direction == 'UP' and self.action_stack[1].color != first_color:
-                self.capturing = True
-                return
-
-            if self.action_stack[0].direction == 'UP' and self.action_stack[1].direction == 'DOWN' and self.action_stack[1].color == first_color:
-
-                # eliminate first move of white castle
-                if self.action_stack[0].piece == 'K' and self.action_stack[1].piece == 'K' and self.action_stack[0].square == 'e1':
-                    if self.action_stack[1].square == 'c1' or self.action_stack[1].square == 'g1':
-                        self.castling = True
-                        return
-
-                # eliminate first move of white castle
-                if self.action_stack[0].piece == 'k' and self.action_stack[1].piece == 'k' and self.action_stack[0].square == 'e8':
-                    if self.action_stack[1].square == 'c8' or self.action_stack[1].square == 'g8':
-                        self.castling = True
-                        return
-
-                move = self.action_stack[0].square + self.action_stack[1].square
-                self.send_move(move)
-                self.clear_action_stack()
-                return
-
-        self.clear_action_stack()
-
-    def piece_up(self, piece, square, color):
-        print('UP', piece, square, color)
-        self.action_stack.append(Action('UP', piece, square, color))
-        self.interpret_action_stack()
-
-    def piece_down(self,  piece, square, color):
-        print('DOWN', piece, square, color)
-        self.action_stack.append(Action('DOWN', piece, square, color))
-        self.interpret_action_stack()
+    async def piece_down(self,  piece, square, color):
+        action = Action('DOWN', piece, square, color)
+        # print(action)
+        await self.light_led(action.square)
+        await self.actions.put(action)
 
     async def notification_handler(self, characteristic, data):
         if self.prev_data is not None:
@@ -195,23 +124,21 @@ class ECB:
 
                     if prev_fig != 0 and fig == 0:
                         fig_sym = PIECES[prev_fig]
-                        self.piece_up(fig_sym, square, fig_sym.isupper())
+                        await self.piece_up(fig_sym, square, fig_sym.isupper())
 
                     if prev_fig == 0 and fig != 0:
                         fig_sym = PIECES[fig]
-                        self.piece_down(fig_sym, square, fig_sym.isupper())
+                        await self.piece_down(fig_sym, square, fig_sym.isupper())
 
         # print(data.hex())
         self.prev_data = data
-
-
 
         # led = bytearray([0x0A, 0x08, 0x1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
         # await self.client.write_gatt_char(WRITECHARACTERISTICS, led)
 
     async def connect(self, key):
         await self.disconnect()
-        print("*** connecting ***")
+        # print("*** connecting ***")
         self.device = self.devices[key]
         self.client = BleakClient(self.device)
         await self.client.connect()
@@ -232,7 +159,79 @@ class ECB:
         self.client = None
         self.device = None
 
-    async def main(self):
+    async def absorb_move(self, move):
+        if self.available():
+            self.send_disabled = True
+            await self.light_led(move[:2])
+            await self.light_led(move[2:4])
+        # print(f"absorbing {move}")
+
+    async def clean_move_parser(self):
+        if self.available():
+            await self.actions.put(None)
+            self.send_disabled = False
+
+    async def get_action(self):
+        action = await self.actions.get()
+        return action
+
+    async def parse_move(self):
+        first_up = await self.get_action()
+        if first_up is None:
+            return None
+        await self.light_led(first_up.square)
+
+        if first_up.direction != 'UP':
+            return None
+
+        action_down = await self.get_action()
+        if action_down is None:
+            return None
+
+        if action_down.direction != 'DOWN':
+            action = action_down
+
+            action_down = await self.get_action()
+            if action_down is None:
+                return None
+
+            if action_down.direction != 'DOWN':
+                return None
+            else:
+                if first_up.color != action_down.color:
+                    first_up = action
+
+        if action_down.color == first_up.color:
+            if first_up.piece == action_down.piece:
+                # castling
+                if (first_up.piece == 'K' and first_up.square == 'e1' and action_down.square in {'c1', 'g1'}) or \
+                        (first_up.piece == 'k' and first_up.square == 'e8' and action_down.square in {'c8', 'g8'}):
+                    rook_up = await self.get_action()
+                    if rook_up is None:
+                        return
+                    rook_down = await self.get_action()
+                    if rook_down is None:
+                        return
+
+                    return first_up.square + rook_up.square
+
+                return first_up.square + action_down.square
+            else:
+                return first_up.square + action_down.square + action_down.piece.lower()
+
+        return None
+
+    async def actions_loop(self):
+        while True:
+            move = await self.parse_move()
+            await asyncio.sleep(0.3)
+            await self.all_led_off()
+            if move is not None:
+                # print('MOVE', move)
+                self.send_move(move)
+            self.send_disabled = False
+
+    async def command_loop(self):
         while True:
             while True:
                 try:
@@ -252,7 +251,10 @@ class ECB:
                 elif ecb_command.cmd == 'status':
                     await self.status()
                 elif ecb_command.cmd == 'clean':
-                    self.clear_action_stack()
+                    await self.clean_move_parser()
+                    #self.clear_action_stack()
+                elif ecb_command.cmd == 'move':
+                    await self.absorb_move(ecb_command.content)
                 self.out_queue.put(Payload.terminal())
             except Exception as e:
                 traceback.print_exc()
@@ -260,3 +262,6 @@ class ECB:
                 # self.out_queue.put(Payload.text(f"{type(e).__name__} {str(e)}"))
                 self.out_queue.put(Payload.text(repr(e)))
                 self.out_queue.put(Payload.terminal())
+
+    # async def main(self):
+    #     await asyncio.gather(self.command_loop(), self.actions_loop())

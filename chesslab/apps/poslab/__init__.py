@@ -221,6 +221,7 @@ all commands available:"""
 
                 san_str = self.board.san(engine_move)
                 self.make_move(engine_move)
+                yield from self.send_move_to_bt(engine_move.uci())
                 yield Payload.text(san_str)
                 yield from self.send_pos_status()
             else:

@@ -97,6 +97,7 @@ class MainApp:
         'book',
         'my',
         'chess960',
+        'ecb_enabled',
         'apps'
     ]
 
@@ -148,6 +149,7 @@ class MainApp:
         self.resigned = False
         self.chess960 = False
         self.engine_color = True
+        self.ecb_enabled = True
         self.colors = {
             'square dark': "#858383",
             'square light': "#d9d7d7"
@@ -318,19 +320,27 @@ e.g. load snapshot1"""
         else:
             return value
 
-    def execute(self, cmd, value):
+    def execute(self, cmd, value, mode=None):
         # print(cmd, value)
         res = None
 
         try:
-            move = self.board.parse_uci(cmd)
-            res = self.go(move)
+            if mode == "ecb":
+                if self.ecb_enabled:
+                    move = self.board.parse_uci(cmd)
+                    san_str = self.board.san(move)
+                    yield Payload.text(san_str)
+                    res = self.go(move)
+                else:
+                    yield Payload.terminal()
+                    return
         except chess.InvalidMoveError as e:
             pass
 
         try:
-            move = self.board.parse_san(cmd)
-            res = self.go(move)
+            if mode == "term":
+                move = self.board.parse_san(cmd)
+                res = self.go(move)
         except chess.InvalidMoveError as e:
             pass
 
@@ -435,14 +445,13 @@ chess960 on|off
     def _new(self):
         """
 Set the board in an initial position of game of chess."""
-        self.board.reset()
-
         if self.chess960:
             self.board = Board(chess960=True)
             self.board.set_chess960_pos(random.randint(0, 959))
-            self.fen = self.board.fen()
         else:
-            self.fen = chess.STARTING_FEN
+            self.board = Board()
+
+        self.fen = self.board.fen()
         yield self.payload()
 
     def _again(self):
@@ -606,6 +615,9 @@ book on|off
 """
         self.book = (value == 'on')
 
+    def send_move_to_bt(self, uci_move):
+        yield Payload.ecb_data("move", uci_move)
+
     def _bt(self, *args):
         """
 Managing electronic chessboard via bluetooth.
@@ -622,6 +634,9 @@ bt status
 
 Clean chessboard buffer:
 bt clean
+
+Board sending (not sending) moves to application
+bt ecb on|off
 
 Disconnect device:
 bt disconnect
@@ -643,6 +658,16 @@ bt disconnect
                 return
             if cmd == 'clean':
                 yield Payload.ecb_data('clean')
+                return
+            if cmd == 'ecb' and args[1] == 'on':
+                self.ecb_enabled = True
+                yield Payload.text("ecb on")
+                yield Payload.terminal()
+                return
+            if cmd == 'ecb' and args[1] == 'off':
+                self.ecb_enabled = False
+                yield Payload.text("ecb off")
+                yield Payload.terminal()
                 return
         else:
             yield Payload.ecb_data('discover')

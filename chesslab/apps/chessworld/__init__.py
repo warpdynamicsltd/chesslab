@@ -83,7 +83,9 @@ an application to simulate games, tournaments and players with specific ratings
             return move
         return self.choose_engine_move()
 
-    def make_move(self, move):
+    def make_move(self, move, send=False):
+        if send:
+            yield from self.send_move_to_bt(move.uci())
         self.board.push(move)
 
     def start(self):
@@ -197,7 +199,7 @@ Start new serious game """
 
         if self.engine_color == chess.WHITE:
             move = self.choose_automatic_move()
-            self.make_move(move)
+            yield from self.make_move(move, True)
             yield self.payload()
 
         color = 'white' if self.engine_color else 'black'
@@ -239,7 +241,7 @@ Display game outcome
         if move is not None:
             outcome = self.fixed_outcome()
             if outcome is None:
-                self.make_move(move)
+                yield from self.make_move(move)
                 yield self.payload()
                 outcome = self.fixed_outcome()
                 if outcome is not None:
@@ -248,7 +250,7 @@ Display game outcome
                 else:
                     engine_move = self.choose_automatic_move()
                     san_str = self.board.san(engine_move)
-                    self.make_move(engine_move)
+                    yield from self.make_move(engine_move, send=True)
                     yield Payload.text(san_str)
                     outcome = self.fixed_outcome()
                     if outcome is not None:
