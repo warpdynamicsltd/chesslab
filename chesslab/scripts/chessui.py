@@ -1,6 +1,7 @@
 import time
 import io
 import os
+import asyncio
 import sys
 import sys
 import traceback
@@ -20,13 +21,20 @@ from chesslab.apps.poslab import PosLab
 from chesslab.apps.tactics import TacticsLab
 from chesslab.apps.chessworld import ChessWorld
 from chesslab.scripts import init
+from chesslab.ecb import ECB
 import chesslab.assets.img
+
+
+class ChesslabCommand:
+    def __init__(self, cmd, content):
+        self.cmd = cmd
+        self.content = content
+
 
 def convert_svg_to_png(svg_string):
     output = io.BytesIO()
     cairosvg.svg2png(bytestring=svg_string, write_to=output)
     return output
-
 
 def inheritors(klass):
     subclasses = set()
@@ -43,7 +51,7 @@ def inheritors(klass):
 apps = {cls.cmd: cls for cls in inheritors(MainApp)}
 
 
-def processor(in_queue, out_queue):
+def chesslab_logic_processor(in_queue, out_queue):
     app = MainApp.app()
     app.apps = apps
     # make sure pickle object is compatible with code version
@@ -54,8 +62,8 @@ def processor(in_queue, out_queue):
         out_queue.put(payload)
 
     while True:
-        command = in_queue.get()
-        out_queue.put(Payload(command))
+        chesslab_command = in_queue.get()
+        command = chesslab_command.content
         a = command.split(" ", 1)
         if len(a) == 1:
             cmd, value = a[0], ""
@@ -110,24 +118,28 @@ def processor(in_queue, out_queue):
             out_queue.put(output)
 
 
+def electronic_chessboard_communication(ec_in_queue, in_queue, out_queue):
+    ecb = ECB(ec_in_queue, in_queue, out_queue)
+    asyncio.run(ecb.main())
+    # while True:
+    #     m = ec_in_queue.get()
+    #     print(m)
+    #     in_queue.put('echo "ebc test"')
+
+
 # Create the main window
 def main():
     init()
     in_queue = Queue()
     out_queue = Queue()
-    p = Process(target=processor, args=(in_queue, out_queue))
-    p.start()
 
-    # root = tk.Tk()
-    # root.title("Custom Terminal")
-    #
-    # # Create a scrolled text area
-    # text_area = scrolledtext.ScrolledText(root, wrap=tk.WORD)
-    # text_area.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
-    #
-    # # Create an entry box for typing commands
-    # entry = tk.Entry(root)
-    # entry.pack(side=tk.BOTTOM, padx=10, pady=10, fill=tk.X)
+    ec_in_queue = Queue()
+
+    chesslab_logic_process = Process(target=chesslab_logic_processor, args=(in_queue, out_queue))
+    chesslab_logic_process.start()
+
+    electronic_chessboard_process = Process(target=electronic_chessboard_communication, args=(ec_in_queue, in_queue, out_queue))
+    electronic_chessboard_process.start()
 
     root = tk.Tk()
     root.title("Chesslab")
@@ -170,7 +182,8 @@ def main():
     def execute_command():
         command = entry.get()
         stack.append(command)
-        in_queue.put(command)
+        in_queue.put(ChesslabCommand("term", command))
+        text_area.insert(tk.INSERT, f"{command}\n")
         entry.config(state=tk.DISABLED)
 
     def on_arrow_press(direction):
@@ -209,10 +222,12 @@ def main():
                 image = tk.PhotoImage(data=payload.img_data)
                 image_label.config(image=image)
                 image_label.image = image
-
             if payload.last:
                 entry.config(state=tk.NORMAL)
                 entry.delete(0, tk.END)
+
+            if payload.ecb_data is not None:
+                ec_in_queue.put(payload.ecb_data)
 
         root.after(time_step, receiver)
 
@@ -222,9 +237,12 @@ def main():
 
     # Run the application
     root.mainloop()
-    in_queue.put('__exit__')
+
+    electronic_chessboard_process.terminate()
+
+    in_queue.put(ChesslabCommand('term', '__exit__'))
     # p.terminate()
-    p.join()
+    chesslab_logic_process.join()
 
 
 if __name__ == "__main__":
