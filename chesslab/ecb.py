@@ -77,11 +77,13 @@ class ECB:
         i = 7 - ord(square[0]) + ord('a')
         j = 8 - int(square[1])
         self.led[2 + j] |= (1 << i)
-        await self.client.write_gatt_char(WRITECHARACTERISTICS, self.led)
+        if self.available():
+            await self.client.write_gatt_char(WRITECHARACTERISTICS, self.led)
 
     async def all_led_off(self):
         self.led = bytearray([0x0A, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
-        await self.client.write_gatt_char(WRITECHARACTERISTICS, self.led)
+        if self.available():
+            await self.client.write_gatt_char(WRITECHARACTERISTICS, self.led)
 
     async def discover(self):
         self.devices = {}
@@ -136,11 +138,15 @@ class ECB:
         # led = bytearray([0x0A, 0x08, 0x1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
         # await self.client.write_gatt_char(WRITECHARACTERISTICS, led)
 
+    def disconnect_handler(self, client):
+        print("disconnected")
+        self.prev_data = None
+
     async def connect(self, key):
         await self.disconnect()
         # print("*** connecting ***")
         self.device = self.devices[key]
-        self.client = BleakClient(self.device)
+        self.client = BleakClient(self.device, disconnected_callback=self.disconnect_handler)
         await self.client.connect()
         await self.client.start_notify(READDATA, self.notification_handler)  # start the notification handler
         await self.client.write_gatt_char(WRITECHARACTERISTICS, INITIALIZASION_CODE)
@@ -167,6 +173,7 @@ class ECB:
         # print(f"absorbing {move}")
 
     async def clean_move_parser(self):
+        self.prev_data = None
         if self.available():
             await self.actions.put(None)
             self.send_disabled = False

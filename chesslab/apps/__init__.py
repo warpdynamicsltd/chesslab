@@ -1,6 +1,7 @@
 import time
 import random
 import glob
+import math
 import pickle
 import io
 import os
@@ -154,6 +155,10 @@ class MainApp:
             'square dark': "#858383",
             'square light': "#d9d7d7"
         }
+
+    def rating2nodes(self, r):
+        # formula approximates more or less the plot given in https://www.melonimarco.it/en/2021/03/08/stockfish-and-lc0-test-at-different-number-of-nodes/
+        return round(math.pow(10, 1.7 * math.tan(math.pi * (r - 2250) / 4500) + 3.7))
 
     def copy_attrs(self, target):
         for attr_name in MainApp.attrs_to_copy:

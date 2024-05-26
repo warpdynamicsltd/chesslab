@@ -67,10 +67,6 @@ an application to simulate games, tournaments and players with specific ratings
         self.my_rating += k*(S_a - E_a)
         self.my_rating = round(self.my_rating)
 
-    def rating2nodes(self, r):
-        # formula approximates more or less the plot given in https://www.melonimarco.it/en/2021/03/08/stockfish-and-lc0-test-at-different-number-of-nodes/
-        return round(math.pow(10, 1.7 * math.tan(math.pi * (r - 2250) / 4500) + 3.7))
-
     def choose_engine_move(self):
         with ChesslabEngine(self.engine_path) as engine:
             lines = engine.analyse(self.board, self.limit, self.lines)

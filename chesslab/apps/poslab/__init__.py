@@ -371,6 +371,16 @@ limit nodes 2.5k
 limit nodes 3.1m"""
         self.limit = self.parse_limit(arg_name, value)
 
+    def _rating(self, value: int):
+        """
+Set engine strength limit based on rating
+
+rating <value: int>
+
+e.g.
+rating 1300"""
+        self.limit = Limit(nodes=self.rating2nodes(value))
+
     def _back(self):
         yield self.payload("Can't take back during serious game.")
 
