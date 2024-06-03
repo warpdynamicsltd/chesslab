@@ -7,6 +7,7 @@ import chess
 import chess.pgn
 from chesslab.engine import ChesslabEngine, Limit
 from chesslab.apps import MainApp, Payload
+from chesslab.game_score import score_to_numeric
 
 
 class ChessWorld(MainApp):
@@ -67,11 +68,23 @@ an application to simulate games, tournaments and players with specific ratings
         self.my_rating += k*(S_a - E_a)
         self.my_rating = round(self.my_rating)
 
+    def choose_line(self, lines):
+        seq = list(map(lambda line: (score_to_numeric(line.score.relative, mate_score=float('inf')), line), lines))
+        line = lines[0]
+        # print(seq)
+        if any([n <= 20 for n, line in seq]):
+            seq = [(n, line) for n, line in seq if abs(n) <= 20]
+            if seq:
+                n, line = random.choice(seq)
+                # print(n)
+
+        return line
+
     def choose_engine_move(self):
         with ChesslabEngine(self.engine_path) as engine:
             lines = engine.analyse(self.board, self.limit, self.lines)
-
-        return lines[0].moves[0]
+            line = self.choose_line(lines)
+        return line.moves[0]
 
     def choose_automatic_move(self):
         move = self.book_move()
