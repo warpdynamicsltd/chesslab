@@ -109,6 +109,7 @@ Next randomly chosen puzzle from predefined set.
 """
         self.next_puzzle()
         self.flipped = self.puzzle.flipped
+        self.engine_color = not self.puzzle.board.turn
         yield from self._info()
         yield from PosLab._fen(self, self.puzzle.fen)
 
@@ -116,6 +117,7 @@ Next randomly chosen puzzle from predefined set.
         con = sqlite3.connect(self.puzzles_db_path)
         self.puzzle = self.pp.get_puzzle(con, self.table_name, value)
         con.close()
+        self.engine_color = not self.puzzle.board.turn
         yield from self._info()
         yield from PosLab._fen(self, self.puzzle.fen)
 
